@@ -1,0 +1,28 @@
+.swiper-container {
+  transition-duration: 300ms;
+}
+
+.swiper-slide {
+  width: 450px;
+}
+
+@media screen and (max-width: 1024px) {
+  .swiper-slide {
+    width: 350px;
+    min-width: 350px;
+    height: 400px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .swiper-slide {
+    width: 80vw;
+    min-width: 80vw;
+    height: 100vw;
+  }
+}
+
+.trans-y {
+  will-change: scroll-position;
+  transform: 0s ease;
+}

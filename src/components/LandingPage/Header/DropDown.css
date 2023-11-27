@@ -1,0 +1,84 @@
+@media screen and (max-width:775px)
+{
+    .graphics{
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+        width:94%;
+        margin-bottom:30px;
+        margin-left: 2.2%;
+        
+        padding:10px;
+
+    }
+    .ServicesBar{
+        position:relative;
+        margin-top: 100px;
+    }
+    .animationW{
+        height:70px;
+    }
+    .itsolveMenu{
+        width:100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        
+    }
+    .textSize{
+        font-size: medium;
+    }
+    
+    .cdiv:nth-child(1)
+    {
+        margin-top: 0;
+    }
+    .list-container{
+        text-align: center;
+        margin-left: 30px;
+    }
+    .list_solve  {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 30%;
+        font-size: 20px;
+        font-weight: 500;
+        margin-right: 0px;
+        
+        padding-right: 0px;
+    }
+
+}
+@media screen and (min-width:768px)
+{
+    .list_solve {
+        margin-top:15%;
+    }
+}
+
+.cdiv_desktop{
+    margin-bottom: 4%;
+    
+}
+
+.list_solve_desktop  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap:wrap;
+    width: 98%;
+    margin-top: 10%;
+    font-size: 35px;
+    font-weight: 500;
+    margin-right: 0px;
+    margin-left: 8px;
+    padding: 5px 0px;
+    
+}
+@media screen and(min-width:425px) and (max-width:768px)
+{
+    
+}
+

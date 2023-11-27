@@ -1,0 +1,98 @@
+@media screen and (min-width: 1024px) {
+  .s-font-size-lg {
+    font-size: min(2.77778vw, 40px);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .s-font-size-lg {
+    font-size: min(2.77778vw, 40px);
+  }
+}
+
+@media screen and (max-width: 769px) {
+  .s-font-size-md {
+    font-size: 4.39024vw;
+  }
+}
+@media screen and (max-width: 340px) {
+
+  .image{
+    width:75px;
+    height:30px;
+    padding-left: 3px;
+  }
+}
+
+
+.mantine-1c0777x {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Poppins, sans-serif;
+  font-size: 0.90rem;
+  height: 1.25rem;
+  line-height: calc(1.125rem);
+  text-decoration: none;
+  padding: 0px calc(0.566667rem);
+  box-sizing: border-box;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  width: auto;
+  text-transform: uppercase;
+  border-radius: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.015625rem;
+  cursor: inherit;
+  overflow: hidden;
+  color: rgb(253, 126, 20);
+  border: 0.0625rem solid transparent;
+  margin-left: 1rem;
+}
+.mantine-1t45alw {
+  white-space: nowrap;
+
+}
+.flexing{
+  display:flex;
+}
+.mantine-Badge-root{
+  margin-top:17px;
+}
+@media screen and (max-width: 767px)
+{
+  .mantine-Badge-root{
+    margin-top:10px;
+    height:20px;
+    width: 55px;
+    
+  }
+}
+@media screen and (max-width: 407px)
+{
+  .mantine-Badge-root{
+    font-size: xx-small;
+    height:18px;
+    width: 50px;
+    margin-left: -3px;
+    
+  }
+  .image{
+    width:75px;
+    height:30px;
+    margin-left: -10px;
+    
+  }
+  .login .py-2{
+    font-size: x-small;
+  }
+
+}
+
+@media screen and(max-width:831px)
+{
+  
+
+
+}

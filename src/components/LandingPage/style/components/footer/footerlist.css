@@ -1,0 +1,14 @@
+.mill {
+    display: block;
+    transform: translate3d(0, 0, 0);
+    transition: transform 450ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.ml {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transform: translate3d(0, 0, 0);
+    white-space: nowrap;
+    display: block;
+    transition: transform 450ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}

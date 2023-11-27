@@ -1,0 +1,74 @@
+@media screen and (min-width: 1024px) {
+  .lg-font-size-lg {
+    font-size: min(6.66vw, 96px);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .lg-font-size-lg {
+    font-size: min(6.66vw, 96px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .lg-font-size-md {
+    font-size: 7.4vw;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .lg-font-size-sm {
+    font-size: 10vw;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .md-font-size-lg {
+    font-size: min(6vw, 85px);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .md-font-size-lg {
+    font-size: min(6vw, 90px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .md-font-size-md {
+    font-size: 7vw;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .md-font-size-sm {
+    font-size: 8vw;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .sm-font-size-lg {
+    font-size: min(3.5vw, 60px);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .sm-font-size-lg {
+    font-size: min(3vw, 60px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sm-font-size-md {
+    font-size: 5vw;
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .sm-font-size-sm {
+    font-size: 5vw;
+  }
+}
+
+
+

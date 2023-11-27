@@ -1,0 +1,89 @@
+.fade-out-from-left {
+  animation: from-left 1200ms ease forwards;
+}
+
+@keyframes from-left {
+  0% {
+    transform: translateX(-30%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.fade-out-from-right {
+  animation: from-right 1200ms ease forwards;
+}
+
+@keyframes from-right {
+  0% {
+    transform: translateX(30%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.rotate .plus {
+  animation: rotate-clockwise 1000ms ease 100ms both;
+}
+
+.rotate:hover .plus {
+  animation: rotate-anticlockwise 1000ms ease 100ms both;
+}
+
+@keyframes rotate-clockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes rotate-anticlockwise {
+  0% {
+    transform: rotate(180deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 1000ms ease forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fade-out {
+  animation: fadeOut 1000ms ease forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media screen and (max-width: 831px) {
+  .slogan {
+
+  }
+}
