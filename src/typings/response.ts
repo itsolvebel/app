@@ -1,4 +1,4 @@
 export type Response<T> = {
-  message: String
+  message: string
   data: T
 }

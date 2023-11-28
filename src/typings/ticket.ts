@@ -2,28 +2,28 @@ import { User, UserRole } from '@/typings/user'
 import { Category } from '@/typings/category'
 
 export type Ticket = {
-  id: String
-  user: String
+  id: string
+  user: User
   users: TicketUser[]
-  title: String
-  description: String
+  title: string
+  description: string
   status: TicketStatus
   categories: Category[]
   deadline: Date | null
   budget: Number | null
-  created_at: String
+  created_at: string
 }
 
 export type NewTicket = {
-  title: String
-  description: String
+  title: string
+  description: string
   categories: Category[]
   deadline: Date | null
   budget: Number | null
 }
 
 export type TicketUser = {
-  id: String
+  id: string
   user: User
   role: UserRole
 }

@@ -6,6 +6,12 @@ import { config } from '@/config'
 import { useRouter } from 'next/navigation'
 
 
+export const useIsAuthenticated = () => {
+  const { data, loading } = useRequest('GET', '/api/auth/me')
+
+  return { isAuthenticated: !!data, loading }
+}
+
 export const useLogin = (onError?: (error: AxiosError) => void) => {
   const router = useRouter()
   const { loading, request } = usePost('/api/auth/login', {

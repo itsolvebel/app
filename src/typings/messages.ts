@@ -1,14 +1,14 @@
 import { User } from '@/typings/user';
 
 export type TicketMessage = {
-  id: String
+  id: string
   user: User
-  ticket_id: String
-  content: String
+  ticket_id: string
+  content: string
   created_at: Date
   updated_at: Date
 }
 
 export type NewTicketMessage = {
-  content: String
+  content: string
 }

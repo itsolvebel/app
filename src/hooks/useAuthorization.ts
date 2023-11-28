@@ -20,6 +20,11 @@ export const useUserRoles = () => {
     return data?.data.user.roles || []
   }, [data])
 
+  const isUser = useMemo(
+    () => roles.includes(UserRole.User),
+    [roles],
+  )
+
   const isFreelancer = useMemo(
     () => roles.includes(UserRole.Freelancer),
     [roles],
@@ -35,5 +40,5 @@ export const useUserRoles = () => {
     [roles],
   )
 
-  return { loading, roles, isFreelancer, isTicketManager, isAdmin }
+  return { loading, roles, isUser, isFreelancer, isTicketManager, isAdmin }
 }
