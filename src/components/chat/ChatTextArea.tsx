@@ -1,20 +1,23 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import React, {ChangeEvent, useCallback, useState} from "react";
 import { Paperclip } from "lucide-react";
 
 import Image from "next/image";
+import {sendMessage} from "next/dist/client/dev/error-overlay/websocket";
 
-export default function ChatTextArea({ sendMessage }) {
+type ChatTextAreaProps= {
+  sendMessage: (content: string) => void;
+}
+
+export default function ChatTextArea({ sendMessage }: ChatTextAreaProps) {
   const [rows, setRows] = useState(1);
   const [message, setMessage] = useState("");
 
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
     setRows(event.target.value.split("\n").length);
   };
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       if (message.trim() !== "") {
@@ -49,7 +52,7 @@ export default function ChatTextArea({ sendMessage }) {
             // placeholder={locked ? "Locked chat" : "Type a message"}
             placeholder="Type a message"
             style={{ maxHeight: "80px" }}
-          ></textarea>
+            ></textarea>
         </div>
       </div>
     </div>

@@ -1,25 +1,38 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect, ReactNode} from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { DatePicker } from "@medusajs/ui";
-import { useAuthContext } from "../../../contexts/AuthContext";
 import { ChevronDown, ChevronUp, Check, Loader2, X } from "lucide-react";
+import {Category} from "@/typings/category";
 
-export default function NewTicketDialog({ children, updateTickets }) {
-  const { auth, logout } = useAuthContext();
-  const [inputs, setInputs] = useState({
+type NewTicketDialogProps = {
+  children: ReactNode | ReactNode[],
+  updateTickets: () => void
+}
+
+
+type NewTicketDialogForm= {
+  title: string,
+  description: string,
+  categoriesSelected: Category[],
+  deadline: Date,
+  budget: number
+}
+
+export default function NewTicketDialog({ children, updateTickets }: NewTicketDialogProps) {
+  const [inputs, setInputs] = useState<NewTicketDialogForm>({
     title: "",
     description: "",
     categoriesSelected: [],
     // deadlineSelected: false,
     deadline: new Date(),
     // budgetSelected: false,
-    budget: null,
+    budget: 0,
   });
   const [isOpened, setIsOpened] = useState(false);
   const [error, setError] = useState("");
   const [button, setButton] = useState(1); // 1 = create, 2 = loading, 3 = error
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:3001/api/v1/categories", {
@@ -50,12 +63,12 @@ export default function NewTicketDialog({ children, updateTickets }) {
         description: inputs.description,
         categories: inputs.categoriesSelected,
         deadline: inputs.deadline,
-        budget: parseInt(inputs.budget),
+        budget: inputs.budget,
       }),
-    }).then((res) => {
+    }).then((res: Response) => {
       if (res.status >= 400) {
         setButton(3);
-        setError(data.error);
+        // setError(res.error);
       } else {
         setButton(1);
         setIsOpened(false);
@@ -72,7 +85,7 @@ export default function NewTicketDialog({ children, updateTickets }) {
     });
   }
 
-  function handleAddCategory(c) {
+  function handleAddCategory(c: Category) {
     setInputs({
       ...inputs,
       categoriesSelected: [...inputs.categoriesSelected, c],
@@ -80,7 +93,7 @@ export default function NewTicketDialog({ children, updateTickets }) {
     setCategories(categories.filter((category) => category !== c));
   }
 
-  function handleDeleteCategory(c) {
+  function handleDeleteCategory(c: Category) {
     setInputs({
       ...inputs,
       categoriesSelected: inputs.categoriesSelected.filter(
@@ -109,7 +122,7 @@ export default function NewTicketDialog({ children, updateTickets }) {
               id="title"
               placeholder="Website for restaurant business"
               type="text"
-              value={inputs.title}
+              value={inputs.title || ""}
               onChange={(e) => setInputs({ ...inputs, title: e.target.value })}
               className="w-full rounded-md bg-[#E7F1FF] px-4 py-2 font-light text-black placeholder-[#ABABAD] placeholder-opacity-50 outline-none transition duration-300 ease-in-out hover:border-[#c1c2ce] focus:border-[#c1c2ce] focus:outline-none"
             />
@@ -122,8 +135,8 @@ export default function NewTicketDialog({ children, updateTickets }) {
             <textarea
               name=""
               id=""
-              cols="30"
-              rows="5"
+              cols={30}
+              rows={5}
               placeholder="I need a website for my restaurant business. I want to have a website where I can show my menu, my location, and my contact information..."
               value={inputs.description}
               onChange={(e) =>
@@ -142,7 +155,7 @@ export default function NewTicketDialog({ children, updateTickets }) {
               defaultValue={"Select"}
               value="Select"
               onValueChange={(v) => {
-                handleAddCategory(v);
+                handleAddCategory(Category[v as keyof typeof Category]);
               }}
             >
               <SelectPrimitive.Trigger asChild>
@@ -174,7 +187,7 @@ export default function NewTicketDialog({ children, updateTickets }) {
                     {categories.map((f, i) => (
                       <SelectPrimitive.Item
                         key={`${f}-${i}`}
-                        value={f}
+                        value={Category[f]}
                         className="radix-disabled:opacity-50 relative flex select-none items-center rounded-md px-8 py-2 text-sm font-medium text-black transition-colors duration-300 hover:bg-[#5A8ED1] hover:text-[#E7F1FF] focus:outline-none"
                       >
                         <SelectPrimitive.ItemText>{f}</SelectPrimitive.ItemText>
@@ -216,7 +229,8 @@ export default function NewTicketDialog({ children, updateTickets }) {
             </label>
             <DatePicker
               value={inputs.deadline}
-              onChange={(date) => setInputs({ ...inputs, deadline: date })}
+              required={true}
+              onChange={(date) => setInputs({ ...inputs, deadline: date || new Date() })}
               className="rounded-md bg-[#E7F1FF] px-4 py-2 font-light font-medium text-black placeholder-opacity-50 shadow-none outline-none transition duration-300 ease-in-out hover:bg-[#E7F1FF] focus:border-[#c1c2ce] focus:outline-none"
             />
             {error.length > 1 && <span className="text-red-800">{error}</span>}
@@ -231,7 +245,7 @@ export default function NewTicketDialog({ children, updateTickets }) {
               placeholder="Leave empty if you don't have a budget"
               type="number"
               value={inputs.budget}
-              onChange={(e) => setInputs({ ...inputs, budget: e.target.value })}
+              onChange={(e) => setInputs({ ...inputs, budget: e.target.valueAsNumber })}
               className="w-full rounded-md bg-[#E7F1FF] px-4 py-2 font-light text-black placeholder-[#ABABAD] placeholder-opacity-50 outline-none transition duration-300 ease-in-out hover:border-[#c1c2ce] focus:border-[#c1c2ce] focus:outline-none"
             />
           </fieldset>

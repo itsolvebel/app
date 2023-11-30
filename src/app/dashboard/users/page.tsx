@@ -1,17 +1,18 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import {useAuthContext} from "../../../contexts/AuthContext";
 import Loading from "@components/Loading";
 import Sidebar from "@components/dashboard/Sidebar";
 import UserTable from "@components/users/UsersTable";
+import {useIsAuthenticated} from "@/hooks/useAuthentication";
+import {getAllUserRoles, UserRole} from "@/typings/user";
 
 
 
 export default function UserDashboard() {
-  const { auth, logout } = useAuthContext();
+  const { loading } = useIsAuthenticated();
   const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState(["User","Tm","Admin", "Freelancer"]);
+  const [roles, setRoles] = useState<UserRole[]>(getAllUserRoles);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function UserDashboard() {
     });
   }
 
-  if (auth.loading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
       <div className="flex h-screen">

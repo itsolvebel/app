@@ -19,3 +19,6 @@ export enum UserRole {
   Tm,
   SalesRep,
 }
+export function getAllUserRoles(): UserRole[] {
+  return Object.keys(UserRole).map(key => parseInt(key) as UserRole);
+}

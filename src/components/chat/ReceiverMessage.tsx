@@ -1,9 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
+import {User} from "@/typings/user";
 
-export default function ReceiverMessage({ user, content }) {
+type ReceiverMessageProps = {
+    user: User,
+    content: String
+}
+
+export default function ReceiverMessage({ user, content }: ReceiverMessageProps) {
   return (
     <div className="flex">
       <div>

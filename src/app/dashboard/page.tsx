@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ShieldCheck, Ticket, Users } from 'lucide-react'
+import {ShieldCheck, Sidebar, Ticket, Users} from 'lucide-react'
 import { useUserRoles } from '@/hooks/useAuthorization'
 import { useRouter } from 'next/navigation'
 import { useFetch } from '@/hooks/useRequest'
 import { User } from '@/typings/user'
 import Loading from '@/components/Loading'
+import {Chart} from "primereact/chart";
+import TicketsCollapsible from "@components/dashboard/TicketsCollapsible";
 
 
 function getGreeting() {
@@ -117,10 +119,10 @@ export default function Dashboard() {
               {charts.map((chart, index) => (
                 <Chart
                   key={index}
-                  title={chart.title}
-                  value={chart.value}
-                  color={chart.color}
-                  icon={chart.icon}
+                  // title={chart.title} TODO
+                  // value={chart.value}
+                  // color={chart.color}
+                  // icon={chart.icon}
                 />
               ))}
             </div>

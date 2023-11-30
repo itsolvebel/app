@@ -12,6 +12,7 @@ export type Ticket = {
   deadline: Date | null
   budget: Number | null
   created_at: string
+  updated_at: string
 }
 
 export type NewTicket = {

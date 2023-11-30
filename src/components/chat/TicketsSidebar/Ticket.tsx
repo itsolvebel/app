@@ -1,4 +1,6 @@
-function formatDate(date) {
+import {Ticket} from "@/typings/ticket";
+
+function formatDate(date: string) {
   const d = new Date(date);
   let month = `${d.getMonth() + 1}`;
   let day = `${d.getDate()}`;
@@ -9,17 +11,21 @@ function formatDate(date) {
 
   return [month, day, year].join("/");
 }
-
-export default function Ticket({ ticket, activeTicket, setActiveTicket }) {
+type TicketProps = {
+  ticket: Ticket,
+  activeTicket: Ticket,
+  setActiveTicket: (ticket: Ticket) => void
+}
+export default function Ticket({ ticket, activeTicket, setActiveTicket }: TicketProps) {
   return (
     <div
       className={`flex h-24 w-full cursor-pointer flex-col justify-between rounded-xl px-8 py-6 transition-all duration-300 ${
-        activeTicket === ticket.id
+        activeTicket.id === ticket.id
           ? "bg-[#5A8ED1] text-white"
           : "bg-[#F2F2F2] text-[#5A8ED1]"
       }`}
       onClick={() => {
-        setActiveTicket(ticket.id);
+        setActiveTicket(ticket);
       }}
     >
       <h1>{ticket.title}</h1>

@@ -1,28 +1,31 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import { Sidebar } from "lucide-react";
 
 import Image from "next/image";
-
+import {TicketStatus} from "@/typings/ticket";
+type ChatHeaderProps = {
+  title: string,
+  status: TicketStatus,
+  openTicketDetails: boolean,
+  setOpenTicketDetails: (openTicketDetails: boolean) => void;
+}
 export default function ChatHeader({
   title,
   status,
   openTicketDetails,
   setOpenTicketDetails,
-}) {
+}: ChatHeaderProps) {
   return (
     <div>
       <div className="flex items-center justify-between rounded-3xl bg-[#E7F1FF] px-12 py-8">
         <div className="flex items-center">
           <div className="ml-3 flex flex-col">
             <p className="text-2xl font-bold text-gray-800">
-              {/* {title} */}
-              Ticket title
+               {title}
+              {/*Ticket title*/}
             </p>
             <p className="text-xs font-normal text-gray-500">
-              {/* {status} */}
-              Status
+               {status}
+              {/*Status*/}
             </p>
           </div>
         </div>

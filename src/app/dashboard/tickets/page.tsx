@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useAuthContext } from "../../../contexts/AuthContext";
 import Loading from "@components/Loading";
 import DashboardSidebar from "@components/dashboard/Sidebar";
 import TicketsSidebar from "@components/chat/TicketsSidebar";
 import Chat from "@components/chat/Chat";
 import ChatDetails from "@components/chat/ChatDetails";
+import {useIsAuthenticated} from "@/hooks/useAuthentication";
+import {Ticket} from "@/typings/ticket";
 
 export default function ChatPage() {
-  const [activeTicket, setActiveTicket] = useState(null);
+  const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
   const [openTicketDetails, setOpenTicketDetails] = useState(false);
-  const { auth, logout } = useAuthContext();
+  const { loading } = useIsAuthenticated();
 
-  if (auth.loading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -31,7 +32,6 @@ export default function ChatPage() {
         <ChatDetails
           activeTicket={activeTicket}
           openTicketDetails={openTicketDetails}
-          setOpenTicketDetails={setOpenTicketDetails}
         />
       </div>
     </>

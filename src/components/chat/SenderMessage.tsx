@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import {User} from "@/typings/user";
 
-export default function ReceiverMessage({ user, content, sent, error }) {
+type ReceiverMessageProps = {
+    user: User,
+    content: string,
+    sent: any,
+    error: any
+}
+
+export default function ReceiverMessage({ user, content, sent, error }: ReceiverMessageProps) {
   return (
     <div className="flex w-full flex-row-reverse">
       <div>

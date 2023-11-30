@@ -1,3 +1,4 @@
+"use client"
 import axios, { AxiosError } from 'axios'
 import { useCallback, useState } from 'react'
 import { config } from '@/config'

@@ -1,14 +1,16 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
 import NewTicketDialog from "./NewTicketDialog";
-import { useAuthContext } from "../../../contexts/AuthContext";
-import Ticket from "./Ticket";
 import TicketLoading from "./TicketLoading";
+import {Ticket as TTicket, TicketStatus} from "@/typings/ticket";
+import Ticket from "./Ticket";
 
-export default function ChatSidebar({ activeTicket, setActiveTicket }) {
-  const { auth, logout } = useAuthContext();
-  const [chatsRooms, setChatsRooms] = useState([]);
+type ChatSidebarProps = {
+  activeTicket: TTicket | null,
+  setActiveTicket: (ticket: TTicket) => void
+}
+
+export default function ChatSidebar({ activeTicket, setActiveTicket }: ChatSidebarProps) {
+  const [tickets, setTickets] = useState<TTicket[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(true);
 
   useEffect(() => {
@@ -22,7 +24,7 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }) {
         },
       });
       const data = await res.json();
-      setChatsRooms(data.data);
+      setTickets(data.data);
       setLoadingTickets(false);
     };
     getTickets();
@@ -38,7 +40,7 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }) {
       },
     });
     const data = await res.json();
-    setChatsRooms(data.data);
+    setTickets(data.data);
   }
 
   if (loadingTickets)
@@ -65,12 +67,12 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }) {
         <h1 className="text-3xl font-bold text-[#5A8ED1]">Tickets</h1>
         <div className="mt-8 flex w-full flex-col gap-4">
           <span className="text-center text-sm text-[#ABABAD]">
-            {chatsRooms.length > 0
+            {tickets.length > 0
               ? "Active Tickets"
               : "You don't have any active tickets"}
           </span>
-          {chatsRooms.map((ticket) => {
-            if (ticket.status === "Open") {
+          {tickets.map((ticket) => {
+            if (ticket.status === TicketStatus.Open) {
               return (
                 <Ticket
                   key={ticket.id}

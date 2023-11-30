@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import {useEffect, useRef, RefObject} from "react";
 import ReceiverMessage from "./ReceiverMessage";
 import SenderMessage from "./SenderMessage";
 import ChatBodyLoader from "./ChatBodyLoader";
@@ -13,7 +13,7 @@ type Props = {
 }
 
 export default function ChatBody({ messages, loadingMessages, userId }: Props) {
-  const scrollRef = useRef(null);
+  const scrollRef: RefObject<HTMLDivElement> = useRef(null);
 
   useEffect(() => {
     const scroll = scrollRef.current;
@@ -39,8 +39,8 @@ export default function ChatBody({ messages, loadingMessages, userId }: Props) {
                     key={i}
                     user={message.user}
                     content={message.content}
-                    sent={message.sent}
-                    error={message.error}
+                    sent={null}
+                    error={null}
                   />
                 );
               } else {

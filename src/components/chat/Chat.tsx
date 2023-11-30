@@ -1,30 +1,29 @@
-"use client";
-
 import {useEffect, useState} from "react";
 import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatTextArea from "./ChatTextArea";
-import {useAuthContext} from "../../contexts/AuthContext";
 
 import Image from "next/image";
-import { Ticket } from '@/typings/ticket'
-import { TicketMessage } from '@/typings/messages'
+import {Ticket, TicketStatus} from '@/typings/ticket'
+import {TicketMessage} from '@/typings/messages'
+import {useRequest} from "@/hooks/useRequest";
+import {User} from "@/typings/user";
 
 type ChatProps = {
-  activeTicket: String | null;
+  activeTicket: Ticket | null;
   openTicketDetails: boolean;
   setOpenTicketDetails: (open: boolean) => void;
 }
 
 export default function Chat({
-                               activeTicket,
-                               openTicketDetails,
-                               setOpenTicketDetails,
-                             }: ChatProps) {
-  const [ticket, setTicket] = useState<Ticket | null>();
+                 activeTicket,
+                 openTicketDetails,
+                 setOpenTicketDetails,
+               }: ChatProps) {
+  const [ticket, setTicket] = useState<Ticket>();
   const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
-
+  const {data: auth}  = useRequest<User>('GET', '/api/auth/me');
   useEffect(() => {
     const getChatRoom = async () => {
       const token = localStorage.getItem("token");
@@ -62,11 +61,10 @@ export default function Chat({
     if (activeTicket !== null) getMessages();
   }, [activeTicket]);
 
-  useEffect((prev) => {
+  useEffect(() => {
       if (activeTicket === null) return;
-      if (prev === activeTicket) return;
 
-      setTicket(null);
+      setTicket(undefined);
       setMessages([]);
       setLoadingMessages(true);
     },
@@ -74,35 +72,31 @@ export default function Chat({
   );
 
   function sendMessage(content: string) {
+    if (!ticket) return;
+    if (!auth) return;
     setMessages((messages) => [
       ...messages,
       {
-        id: 0,
-        content,
-        sent: false,
-        error: false,
-        user: {
-          id: auth.id,
-          first_name: auth.first_name,
-          last_name: auth.last_name,
-          avatar_url: auth.avatar_url || null,
-        },
+        id: "0",
+        ticket_id: ticket.id,
+        content: content,
+        user: auth.id,
+        created_at: new Date(),
+        updated_at: new Date()
       },
     ]);
 
     const cancelMessage = () => {
+      if (!auth) return;
+
       const newMessages = [...messages];
       newMessages[newMessages.length] = {
-        id: 0,
+        id: "0",
         content,
-        sent: undefined,
-        error: true,
-        user: {
-          id: auth.id,
-          first_name: auth.first_name,
-          last_name: auth.last_name,
-          avatar_url: auth.avatar_url || null,
-        },
+        user: auth.id,
+        ticket_id: ticket.id,
+        created_at: new Date(),
+        updated_at: new Date()
       };
 
       setMessages(newMessages);
@@ -135,19 +129,15 @@ export default function Chat({
       const data = JSON.parse(e.data);
 
       console.log(data);
-      if (data.user.id === auth.id) {
+      if (auth && data.user.id === auth.id) {
         const newMessages = [...messages];
         newMessages[newMessages.length] = {
           id: data.id,
           content: data.content,
-          sent: true,
-          error: false,
-          user: {
-            id: auth.id,
-            first_name: auth.first_name,
-            last_name: auth.last_name,
-            avatar_url: auth.avatar_url || null,
-          },
+          user: auth.id,
+          ticket_id: ticket?.id || "",
+          created_at: new Date(),
+          updated_at: new Date()
         };
 
         setMessages(newMessages);
@@ -157,16 +147,12 @@ export default function Chat({
       setMessages((messages) => [
         ...messages,
         {
-          id: 0,
+          id: "0",
           content: data.content,
-          sent: true,
-          error: false,
-          user: {
-            id: data.user.id,
-            first_name: data.user.first_name,
-            last_name: data.user.last_name,
-            avatar_url: data.user.avatar_url || null,
-          },
+          user: data.user.id,
+          ticket_id: ticket?.id || "",
+          created_at: new Date(),
+          updated_at: new Date()
         },
       ]);
     };
@@ -197,15 +183,15 @@ export default function Chat({
     <>
       <div className="flex h-screen w-full flex-col rounded-3xl bg-[#E7F1FF]">
         <ChatHeader
-          title={ticket.title}
-          service={ticket.status}
+          title={ticket?.title || ""}
+          status={ticket?.status || TicketStatus.Closed}
           openTicketDetails={openTicketDetails}
           setOpenTicketDetails={setOpenTicketDetails}
         />
         <ChatBody
           messages={messages}
           loadingMessages={loadingMessages}
-          userId={auth.id}
+          userId={auth?.id || ""}
         />
         <ChatTextArea sendMessage={sendMessage}/>
       </div>

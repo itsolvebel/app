@@ -1,16 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { X, Users } from "lucide-react";
+import {useEffect, useState} from "react";
+import {Users} from "lucide-react";
 import Image from "next/image";
+import {Ticket} from "@/typings/ticket";
+import {User, UserRole} from "@/typings/user";
+
+type ChatDetailsProps = {
+  activeTicket: Ticket | null,
+  openTicketDetails: boolean,
+}
+
 
 export default function ChatDetails({
   activeTicket,
   openTicketDetails,
-  setOpenTicketDetails,
-}) {
+}: ChatDetailsProps) {
   const [chatRoom, setChatRoom] = useState({});
-  const [chatMembers, setChatMembers] = useState([]);
+  const [chatMembers, setChatMembers] = useState<User[]>([]);
 
   useEffect(() => {
     const getChatRoom = async () => {
@@ -57,20 +64,20 @@ export default function ChatDetails({
           <div className="mt-5 flex flex-col gap-4">
             {chatMembers.map((member) => (
               <div
-                key={member._id}
+                key={member.id}
                 className="flex items-center gap-3 text-sm font-medium text-[#000000]"
               >
-                {member.avatar === null ? (
+                {member.avatar_url === null ? (
                   <div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E7F1FF]">
                       <p className="text-sm font-bold text-[#ABABAD]">
-                        {member.firstName.charAt(0) + member.lastName.charAt(0)}
+                        {member.first_name.charAt(0) + member.last_name.charAt(0)}
                       </p>
                     </div>
                   </div>
                 ) : (
                   <Image
-                    src={member.avatar}
+                    src={member.avatar_url}
                     alt="Picture of the author"
                     width={35}
                     height={35}
@@ -78,18 +85,18 @@ export default function ChatDetails({
                   />
                 )}
                 <div className="flex flex-col">
-                  {member.firstName} {member.lastName}
-                  {member.role === "admin" ? (
+                  {member.first_name} {member.last_name}
+                  {member.roles.includes(UserRole.Admin) ? (
                     <span className="text-xs text-[#ABABAD]">
                       Administrator
                     </span>
-                  ) : member.role === "tm" ? (
+                  ) : member.roles.includes(UserRole.Tm) ? (
                     <span className="text-xs text-[#ABABAD]">
                       Ticket Manager
                     </span>
-                  ) : member.role === "freelancer" ? (
+                  ) : member.roles.includes(UserRole.Freelancer) ? (
                     <span className="text-xs text-[#ABABAD]">
-                      {member.work}
+                      {member.categories.toString() /*Not sure what needed to happen here, it previously was member.work*/}
                     </span>
                   ) : (
                     <span className="text-xs text-[#ABABAD]">Client</span>
