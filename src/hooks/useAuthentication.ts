@@ -4,13 +4,14 @@ import { AxiosError } from 'axios'
 import { CredentialHeaders, useDelete, usePost, usePut, useRequest } from '@/hooks/useRequest'
 import { config } from '@/config'
 import { useRouter } from 'next/navigation'
+import {User} from "@/typings/user";
 
 
-export const useIsAuthenticated = () => {
-  const { data, loading } = useRequest('GET', '/api/auth/me')
-
-  return { isAuthenticated: !!data, loading }
-}
+// export const useIsAuthenticated = () => {
+//   const { data, loading } = useRequest<User>('GET', '/api/auth/me')
+//
+//   return { isAuthenticated: !!data, loading }
+// }
 
 export const useLogin = (onError?: (error: AxiosError) => void) => {
   const router = useRouter()

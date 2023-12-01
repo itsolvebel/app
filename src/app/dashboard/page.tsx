@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import {ShieldCheck, Sidebar, Ticket, Users} from 'lucide-react'
-import { useUserRoles } from '@/hooks/useAuthorization'
 import { useRouter } from 'next/navigation'
-import { useFetch } from '@/hooks/useRequest'
 import { User } from '@/typings/user'
-import Loading from '@/components/Loading'
 import {Chart} from "primereact/chart";
 import TicketsCollapsible from "@components/dashboard/TicketsCollapsible";
+import {fetcher} from "@/lib/fetcher";
 
 
 function getGreeting() {
@@ -52,7 +50,7 @@ export default function Dashboard() {
   const router = useRouter()
   const greeting = getGreeting()
 
-  const { data, loading } = useFetch<User>('/auth/me')
+  const { data } = fetcher.get("/auth/me");
   const { isUser } = useUserRoles()
 
   useEffect(() => {
@@ -96,7 +94,6 @@ export default function Dashboard() {
     //
   }, [data])
 
-  if (loading) return <Loading />
 
   if (!loading && !data) {
     window.location.href = '/login'

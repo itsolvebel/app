@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import TicketsTableHead from './TicketsTableHead'
 import TicketsTableItem from './TicketsTableItem'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { Collapsible, CollapsibleTrigger } from '@radix-ui/react-collapsible'
+import {Collapsible, CollapsibleTrigger, Content} from '@radix-ui/react-collapsible'
 import { Ticket } from '@/typings/ticket'
 
 export default function TicketsCollapsible() {
@@ -49,7 +49,7 @@ export default function TicketsCollapsible() {
             </span>
           </CollapsibleTrigger>
         </div>
-        <Collapsible.Content>
+        <Content>
           <table className='w-full border-collapse items-center bg-transparent '>
             <TicketsTableHead />
 
@@ -59,7 +59,7 @@ export default function TicketsCollapsible() {
             ))}
             </tbody>
           </table>
-        </Collapsible.Content>
+        </Content>
       </Collapsible>
     </div>
   )
