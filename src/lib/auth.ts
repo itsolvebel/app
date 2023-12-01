@@ -1,6 +1,7 @@
 import {jwtVerify} from "jose";
 import {config} from "@/config";
 import {fetcher} from "@/lib/fetcher";
+import {UserRole} from "@/typings/user";
 
 export async function verifyJwtToken(token: string) {
     const secret = process.env.TOKEN_SECRET;
@@ -10,8 +11,8 @@ export async function verifyJwtToken(token: string) {
 
     try {
         const verified = await jwtVerify(
-            token,
-            new TextEncoder().encode(secret)
+          token,
+          new TextEncoder().encode(secret)
         );
         return verified.payload;
     } catch (error) {
@@ -36,6 +37,29 @@ export async function logout() {
     }
 }
 
-export async function me(invalidate = false) {
+export async function getMe(invalidate = false) {
     return await fetcher.get("/auth/me");
+}
+
+export type GetUserRolesData = {
+    roles: UserRole[];
+    isAdmin: boolean;
+    isFreelancer: boolean;
+    isUser: boolean;
+    isTm: boolean;
+    isSalesRep: boolean;
+};
+
+export async function getUserRoles(invalidate = false): Promise<GetUserRolesData> {
+    const data = await fetcher.get("/user/roles");
+    const roles: UserRole[] = data.user.roles || [];
+
+    return {
+        roles,
+        isAdmin: roles.includes(UserRole.Admin),
+        isFreelancer: roles.includes(UserRole.Freelancer),
+        isUser: roles.includes(UserRole.User),
+        isTm: roles.includes(UserRole.Tm),
+        isSalesRep: roles.includes(UserRole.SalesRep),
+    };
 }

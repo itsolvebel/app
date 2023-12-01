@@ -1,12 +1,10 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import {ShieldCheck, Sidebar, Ticket, Users} from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { User } from '@/typings/user'
 import {Chart} from "primereact/chart";
 import TicketsCollapsible from "@components/dashboard/TicketsCollapsible";
 import {fetcher} from "@/lib/fetcher";
+import {getMe, getUserRoles} from "@/lib/auth";
+import {redirect} from "next/navigation";
 
 
 function getGreeting() {
@@ -25,8 +23,8 @@ function getGreeting() {
   if (hour >= 22 || hour < 5) return greetings[3]
 }
 
-export default function Dashboard() {
-  const [charts, setCharts] = useState([
+export default async function Dashboard() {
+  const charts =[
     {
       title: 'Total tickets',
       value: 0,
@@ -45,61 +43,56 @@ export default function Dashboard() {
       color: '#ffd727',
       icon: Users,
     },
-  ])
+  ];
 
-  const router = useRouter()
   const greeting = getGreeting()
 
-  const { data } = fetcher.get("/auth/me");
-  const { isUser } = useUserRoles()
+  const isUser  = await getUserRoles();
+  const user = await getMe();
 
-  useEffect(() => {
-    //if (auth.isLogged) getStats()
-    // async function getStats() {
-    //   const token = localStorage.getItem("token")
-    //   const response = await fetch("http://localhost:3001/api/stats/all", {
-    //     headers: {
-    //       "auth-token": token,
-    //     },
-    //   })
-    //   const data = await response.json()
-    //   const { users, companies, tickets, completedTickets } = data.data
-    //   setCharts([
-    //     {
-    //       title: "Total tickets",
-    //       value: tickets,
-    //       color: "#276eff",
-    //       icon: Ticket,
-    //     },
-    //     {
-    //       title: "Completed tickets",
-    //       value: completedTickets,
-    //       color: "#01c156",
-    //       icon: ShieldCheck,
-    //     },
-    //     {
-    //       title: "Registered users",
-    //       value: users,
-    //       color: "#ffd727",
-    //       icon: Users,
-    //     },
-    //     {
-    //       title: "Registered companies",
-    //       value: companies,
-    //       color: "#ff3d3d",
-    //       icon: Building2,
-    //     },
-    //   ])
-    // }
-    //
-  }, [data])
+  // useEffect(() => {
+  //   //if (auth.isLogged) getStats()
+  //   // async function getStats() {
+  //   //   const token = localStorage.getItem("token")
+  //   //   const response = await fetch("http://localhost:3001/api/stats/all", {
+  //   //     headers: {
+  //   //       "auth-token": token,
+  //   //     },
+  //   //   })
+  //   //   const data = await response.json()
+  //   //   const { users, companies, tickets, completedTickets } = data.data
+  //   //   setCharts([
+  //   //     {
+  //   //       title: "Total tickets",
+  //   //       value: tickets,
+  //   //       color: "#276eff",
+  //   //       icon: Ticket,
+  //   //     },
+  //   //     {
+  //   //       title: "Completed tickets",
+  //   //       value: completedTickets,
+  //   //       color: "#01c156",
+  //   //       icon: ShieldCheck,
+  //   //     },
+  //   //     {
+  //   //       title: "Registered users",
+  //   //       value: users,
+  //   //       color: "#ffd727",
+  //   //       icon: Users,
+  //   //     },
+  //   //     {
+  //   //       title: "Registered companies",
+  //   //       value: companies,
+  //   //       color: "#ff3d3d",
+  //   //       icon: Building2,
+  //   //     },
+  //   //   ])
+  //   // }
+  //   //
+  // }, [data])
 
 
-  if (!loading && !data) {
-    window.location.href = '/login'
-  }
-
-  if (isUser) router.push('/tickets')
+  if (isUser) redirect("/tickets");
 
   return (
     <>
@@ -108,7 +101,7 @@ export default function Dashboard() {
         <div className='w-full'>
           <div className='px-24 py-16'>
             <h1 className='text-3xl font-bold'>
-              {greeting}, {data?.first_name}!
+              {greeting}, {user?.first_name}!
             </h1>
           </div>
           <div>

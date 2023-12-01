@@ -2,7 +2,6 @@ import { Toaster } from 'react-hot-toast'
 
 import SideWelcome from './SideWelcome'
 import LoginForm from './LoginForm'
-import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   return (
