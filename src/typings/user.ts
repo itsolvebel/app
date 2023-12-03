@@ -1,4 +1,4 @@
-import { Category } from '@/typings/category'
+import { Category } from "@/typings/category";
 
 export type User = {
   id: string
@@ -13,12 +13,14 @@ export type User = {
 }
 
 export enum UserRole {
-  Admin,
-  Freelancer,
-  User,
-  Tm,
-  SalesRep,
+  Admin = "Admin",
+  Freelancer = "Freelancer",
+  User = "User",
+  Tm = "Tm",
+  SalesRep = "SalesRep",
 }
+
+
 export function getAllUserRoles(): UserRole[] {
-  return Object.keys(UserRole).map(key => parseInt(key) as UserRole);
+  return Object.keys(UserRole).map(key => (key) as UserRole);
 }

@@ -77,10 +77,7 @@ export default function Sidebar() {
     fetchMe();
   });
 
-  console.log(isLoading);
-  console.log(me);
   if (isLoading || !me) return null;
-  console.log("me");
 
   return (
     <div
@@ -100,7 +97,11 @@ export default function Sidebar() {
         />
         <div className="flex flex-col gap-4">
           {sidebarItems.map((item, index) => {
-            if (item.whoAccess.some((r) => me.roles.includes(r)))
+            item.whoAccess.some(r => {
+
+              return me.roles.includes(UserRole[r]);
+            });
+            if (item.whoAccess.some((r) => me.roles.includes(r))) {
               return (
                 <Link
                   key={index}
@@ -124,6 +125,8 @@ export default function Sidebar() {
                   )}
                 </Link>
               );
+            }
+
           })}
         </div>
       </div>
