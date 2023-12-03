@@ -71,6 +71,7 @@ export default function Sidebar() {
     const fetchMe = async () => {
       const user = await getMe();
       setMe(user);
+      setIsLoading(false);
     };
 
     fetchMe();
