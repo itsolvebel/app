@@ -4,7 +4,7 @@ import { refreshAccessToken } from "@/lib/auth";
 
 type Fetcher = {
   get(resource: string, options?: RequestInit): Promise<any>;
-  post(resource: string, body: any, options?: RequestInit): Promise<Promise<any>>;
+  post(resource: string, body: any, options?: RequestInit): Promise<any>;
 }
 
 

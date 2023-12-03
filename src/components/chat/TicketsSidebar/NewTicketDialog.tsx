@@ -1,9 +1,10 @@
-import {useState, useEffect, ReactNode} from "react";
+import { useState, useEffect, ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { DatePicker } from "@medusajs/ui";
 import { ChevronDown, ChevronUp, Check, Loader2, X } from "lucide-react";
-import {Category} from "@/typings/category";
+import { Category } from "@/typings/category";
+import { fetcher } from "@/lib/fetcher";
 
 type NewTicketDialogProps = {
   children: ReactNode | ReactNode[],
@@ -11,7 +12,7 @@ type NewTicketDialogProps = {
 }
 
 
-type NewTicketDialogForm= {
+type NewTicketDialogForm = {
   title: string,
   description: string,
   categoriesSelected: Category[],
@@ -35,40 +36,24 @@ export default function NewTicketDialog({ children, updateTickets }: NewTicketDi
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/v1/categories", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setCategories(data.data);
-      });
+    fetcher.get("/categories").then(res => {
+      setCategories(res.data);
+    });
   }, []);
 
   function handleCreate() {
     setButton(2);
 
-    fetch("http://localhost:3001/api/v1/tickets", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      mode: "cors",
-      body: JSON.stringify({
-        title: inputs.title,
-        description: inputs.description,
-        categories: inputs.categoriesSelected,
-        deadline: inputs.deadline,
-        budget: inputs.budget,
-      }),
-    }).then((res: Response) => {
+    fetcher.post("/tickets", {
+      title: inputs.title,
+      description: inputs.description,
+      categories: inputs.categoriesSelected,
+      deadline: inputs.deadline,
+      budget: inputs.budget,
+    }).then(res => {
       if (res.status >= 400) {
         setButton(3);
-        // setError(res.error);
+        setError(res.error);
       } else {
         setButton(1);
         setIsOpened(false);
@@ -97,7 +82,7 @@ export default function NewTicketDialog({ children, updateTickets }: NewTicketDi
     setInputs({
       ...inputs,
       categoriesSelected: inputs.categoriesSelected.filter(
-        (category) => category !== c
+        (category) => category !== c,
       ),
     });
     setCategories([...categories, c]);
@@ -107,7 +92,8 @@ export default function NewTicketDialog({ children, updateTickets }: NewTicketDi
     <Dialog.Root open={isOpened} onOpenChange={setIsOpened}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="DialogOverlay z-1 fixed inset-0 flex h-full w-full bg-black/50 duration-500 animate-in fade-in" />
+        <Dialog.Overlay
+          className="DialogOverlay z-1 fixed inset-0 flex h-full w-full bg-black/50 duration-500 animate-in fade-in" />
         <Dialog.Content
           className={`DialogContent z-1 fixed left-2/4 top-2/4 -ml-[165px] -mt-[330px] h-min w-[300px] max-w-xl overflow-hidden rounded-xl bg-white px-8 pb-6 pt-6 outline-none duration-500 animate-in fade-in slide-in-from-bottom-10 focus:outline-none max-[350px]:-ml-[125px] max-[350px]:w-[220px] sm:-ml-[265px] sm:w-[500px]`}
         >
@@ -159,7 +145,8 @@ export default function NewTicketDialog({ children, updateTickets }: NewTicketDi
               }}
             >
               <SelectPrimitive.Trigger asChild>
-                <button className="flex w-full items-center rounded-md bg-[#E7F1FF] px-4 py-2 font-medium text-black placeholder-opacity-50 outline-none transition duration-300 ease-in-out focus:outline-none">
+                <button
+                  className="flex w-full items-center rounded-md bg-[#E7F1FF] px-4 py-2 font-medium text-black placeholder-opacity-50 outline-none transition duration-300 ease-in-out focus:outline-none">
                   <SelectPrimitive.Value />
                   <SelectPrimitive.Icon className="ml-2">
                     <ChevronDown size={14} strokeWidth={3} />
@@ -262,8 +249,8 @@ export default function NewTicketDialog({ children, updateTickets }: NewTicketDi
                 button === 1
                   ? "bg-[#5A8ED1] text-[#F2F2F2]" // send
                   : button === 2
-                  ? "pointer-events-none flex justify-center bg-[#E7F1FF]" // loading
-                  : "bg-[#E7F1FF] text-red-600" // error
+                    ? "pointer-events-none flex justify-center bg-[#E7F1FF]" // loading
+                    : "bg-[#E7F1FF] text-red-600" // error
               } w-full rounded-lg px-5 py-2 transition-colors duration-300 ease-in-out`}
               onClick={() => handleCreate()}
             >

@@ -16,24 +16,15 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }: ChatSideb
 
   useEffect(() => {
     const getTickets = async () => {
-      const res = await fetcher.get("/tickets");
-      setTickets(res.data);
+      await updateTickets();
       setLoadingTickets(false);
     };
     getTickets();
   }, []);
 
   async function updateTickets() {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`http://localhost:3001/api/v1/tickets`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setTickets(data.data);
+    const res = await fetcher.get("/tickets");
+    setTickets(res.data);
   }
 
   if (loadingTickets)
@@ -54,7 +45,6 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }: ChatSideb
         </div>
       </div>
     );
-
   return (
     <div
       className="relative flex h-screen min-w-[352px] flex-col items-center justify-between bg-[#FFFFFF] px-6 py-12 transition-all duration-300">
