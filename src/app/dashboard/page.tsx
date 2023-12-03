@@ -1,10 +1,14 @@
-import {ShieldCheck, Sidebar, Ticket, Users} from 'lucide-react'
+'use client'
+import { ShieldCheck, Ticket, Users } from 'lucide-react'
 import { User } from '@/typings/user'
-import {Chart} from "primereact/chart";
-import TicketsCollapsible from "@components/dashboard/TicketsCollapsible";
-import {fetcher} from "@/lib/fetcher";
-import {getMe, getUserRoles} from "@/lib/auth";
-import {redirect} from "next/navigation";
+import { Chart } from 'primereact/chart'
+import TicketsCollapsible from '@components/dashboard/TicketsCollapsible'
+import { getMe, getUserRoles } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { FetchingError } from '@/lib/errors'
+import Loading from '@components/Loading'
+import Sidebar from '@components/dashboard/Sidebar'
 
 
 function getGreeting() {
@@ -23,8 +27,8 @@ function getGreeting() {
   if (hour >= 22 || hour < 5) return greetings[3]
 }
 
-export default async function Dashboard() {
-  const charts =[
+export default function Dashboard() {
+  const charts = [
     {
       title: 'Total tickets',
       value: 0,
@@ -43,12 +47,10 @@ export default async function Dashboard() {
       color: '#ffd727',
       icon: Users,
     },
-  ];
-
+  ]
   const greeting = getGreeting()
-
-  const isUser  = await getUserRoles();
-  const user = await getMe();
+  const [user, setUser] = useState<User>()
+  const [isLoading, setIsLoading] = useState(true)
 
   // useEffect(() => {
   //   //if (auth.isLogged) getStats()
@@ -90,9 +92,28 @@ export default async function Dashboard() {
   //   // }
   //   //
   // }, [data])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { isUser } = await getUserRoles()
 
+        if (isUser) {
+          redirect('/dashboard/tickets')
+        }
 
-  if (isUser) redirect("/tickets");
+        const user = await getMe()
+        setUser(user)
+        setIsLoading(false)
+      } catch (err) {
+        if (err instanceof FetchingError) {
+          console.error(err.body)
+        }
+      }
+    }
+    fetchData()
+  }, [])
+
+  if (isLoading) return <Loading />
 
   return (
     <>
