@@ -36,7 +36,7 @@ export default function Chat({
       setTicket(data.data);
     };
     if (activeTicket) getChatRoom(activeTicket.id);
-    getMe();
+    getUser();
   }, [activeTicket]);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export default function Chat({
 
     try {
       if (activeTicket) {
-        fetcher.post(`tickets/${activeTicket.id}/messages`, content).then((res) => {
+        fetcher.post(`tickets/${activeTicket.id}/messages`, { content }).then((res) => {
           if (res.status !== 201) {
             cancelMessage();
           }
