@@ -13,13 +13,13 @@ const Fetcher = (baseUrl: string): Fetcher => {
     resource = filterResourceString(resource);
     const requestOptions: RequestInit = {
       credentials: "include",
-      ...options,
       method,
       headers: {
         "Content-Type": "application/json",
         ...options?.headers,
       },
       body: body ? JSON.stringify(body) : undefined,
+      ...options,
     };
 
     const response = await fetch(`${baseUrl}${resource}`, requestOptions);

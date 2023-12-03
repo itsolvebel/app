@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Simulate } from "react-dom/test-utils";
 import error = Simulate.error;
 import { FetchingError } from "@/lib/errors";
+import { config } from "@/config";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -23,6 +24,14 @@ export default function LoginForm() {
 
   const handleOnSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // fetch(`${config.BACKEND_URL}/auth/login`, {
+    //   method: "POST",
+    //   body: JSON.stringify(form),
+    //   credentials: "include",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // });
     login(form).then(res => {
       router.replace("/dashboard");
     }).catch(error => {

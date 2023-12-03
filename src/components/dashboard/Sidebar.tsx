@@ -33,12 +33,12 @@ export default function Sidebar() {
       href: "/dashboard/users",
       whoAccess: [UserRole.Admin],
     },
-    {
-      name: "Chat",
-      icon: MessageCircle,
-      href: "/dashboard/chat",
-      whoAccess: [UserRole.Admin, UserRole.Tm, UserRole.Freelancer],
-    },
+    // {
+    //   name: "Chat",
+    //   icon: MessageCircle,
+    //   href: "/dashboard/chat",
+    //   whoAccess: [UserRole.Admin, UserRole.Tm, UserRole.Freelancer],
+    // },
     /*{
       WILL COME LATER
       name: "Calendar",
