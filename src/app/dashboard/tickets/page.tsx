@@ -6,15 +6,11 @@ import DashboardSidebar from "@components/dashboard/Sidebar";
 import TicketsSidebar from "@components/chat/TicketsSidebar";
 import Chat from "@components/chat/Chat";
 import ChatDetails from "@components/chat/ChatDetails";
-import {useIsAuthenticated} from "@/hooks/useAuthentication";
 import {Ticket} from "@/typings/ticket";
 
 export default function ChatPage() {
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
   const [openTicketDetails, setOpenTicketDetails] = useState(false);
-  const { loading } = useIsAuthenticated();
-
-  if (loading) return <Loading />;
 
   return (
     <>

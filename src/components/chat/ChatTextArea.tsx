@@ -1,10 +1,10 @@
-import React, {ChangeEvent, useCallback, useState} from "react";
+import React, { ChangeEvent, useCallback, useState } from "react";
 import { Paperclip } from "lucide-react";
 
 import Image from "next/image";
-import {sendMessage} from "next/dist/client/dev/error-overlay/websocket";
+import { sendMessage } from "next/dist/client/dev/error-overlay/websocket";
 
-type ChatTextAreaProps= {
+type ChatTextAreaProps = {
   sendMessage: (content: string) => void;
 }
 
@@ -20,18 +20,28 @@ export default function ChatTextArea({ sendMessage }: ChatTextAreaProps) {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      if (message.trim() !== "") {
-        sendMessage(message);
-        setMessage("");
-        setRows(1);
-      }
+      submit();
     }
   };
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    submit();
+  }
+
+  function submit() {
+    if (message.trim() !== "") {
+      sendMessage(message);
+      setMessage("");
+      setRows(1);
+    }
+  }
 
   return (
     <div className="flex h-auto max-h-48 min-h-[6rem] w-full rounded-3xl">
       <div className="flex h-full w-full items-center justify-between p-6">
-        <div className="flex h-full h-min w-full items-center justify-between rounded-xl bg-white px-4 py-2">
+        <form onSubmit={handleSubmit}
+              className="flex h-full h-min w-full items-center justify-between rounded-xl bg-white px-4 py-2">
           <div className="flex h-10 w-10 cursor-pointer items-center justify-center">
             <Paperclip size={20} />
           </div>
@@ -52,8 +62,8 @@ export default function ChatTextArea({ sendMessage }: ChatTextAreaProps) {
             // placeholder={locked ? "Locked chat" : "Type a message"}
             placeholder="Type a message"
             style={{ maxHeight: "80px" }}
-            ></textarea>
-        </div>
+          ></textarea>
+        </form>
       </div>
     </div>
   );

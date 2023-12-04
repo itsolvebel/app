@@ -1,49 +1,42 @@
-"use client"
+'use client'
 import { useState } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { login } from '@/lib/auth'
+import { useRouter } from 'next/navigation'
+import { Simulate } from 'react-dom/test-utils'
+import { FetchingError } from '@/lib/errors'
+
+
+type LoginForm = {
+  email_or_username: string;
+  password: string;
+};
 
 export default function LoginForm() {
-  const [form, setForm] = useState({
-    email_or_username: '',
-    password: '',
-  })
+  const router = useRouter()
+  const [form, setForm] = useState<LoginForm>(
+    { email_or_username: '', password: '' }
+  )
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
     setForm((prev) => ({ ...prev, [id]: value }))
   }
 
-  const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleOnSubmit()
-    }
-  }
-
-  const handleOnSubmit = () => {
-    fetch('http://localhost:3001/api/v1/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form),
-      credentials: 'include',
-    }).then((res) => {
-      if (res.status === 401) {
-        res.json().then((data) => {
-          toast.error(data.message)
-        })
+  const handleOnSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    login(form).then(res => {
+      router.replace('/dashboard')
+    }).catch(error => {
+      if (error instanceof FetchingError) {
+        if (error.statusCode === 401) {
+          toast.error('Wrong email/username or password')
+        }
+        return
       }
-
-      if (res.status === 500) {
-        toast.error('Something went wrong')
-      }
-
-      if (res.status === 200) {
-        res.json().then(() => {
-          window.location.href = '/dashboard'
-        })
-      }
+      toast.error('Something went wrong!')
+      console.error(error)
     })
   }
 
@@ -56,7 +49,7 @@ export default function LoginForm() {
             Let&apos;s login to your ItSolve account.
           </span>
         </div>
-        <div className='flex flex-col gap-8'>
+        <form onSubmit={handleOnSubmit} className='flex flex-col gap-8'>
           <div className='flex w-full flex-col gap-2'>
             <label className='font-medium text-white/80'>
               Email or username <span className='text-red-500'>*</span>
@@ -66,7 +59,6 @@ export default function LoginForm() {
               placeholder='john@itsolve.be'
               id='email_or_username'
               onChange={handleOnChange}
-              onKeyDown={handleOnKeyDown}
               className='w-full rounded-lg border-2 border-[#FFFFFF1A] bg-transparent px-4 py-2 text-white outline-none duration-300 focus:border-[#01A0C4] focus:bg-[#01A0C405] focus:outline-none'
             />
           </div>
@@ -80,14 +72,12 @@ export default function LoginForm() {
               placeholder='•••••••••'
               id='password'
               onChange={handleOnChange}
-              onKeyDown={handleOnKeyDown}
               className='w-full rounded-lg border-2 border-[#FFFFFF1A] bg-transparent px-4 py-2 text-white outline-none duration-300 focus:border-[#01A0C4] focus:bg-[#01A0C405] focus:outline-none'
             />
           </div>
 
           <div>
             <button
-              onClick={handleOnSubmit}
               className='rounded-lg bg-[#01A0C4] px-6 py-2 font-medium text-white duration-300 hover:bg-[#25C3E6]'
             >
               Log in
@@ -102,7 +92,7 @@ export default function LoginForm() {
               Sign up
             </Link>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

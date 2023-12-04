@@ -1,5 +1,5 @@
-import { User, UserRole } from '@/typings/user'
-import { Category } from '@/typings/category'
+import { User, UserRole } from "@/typings/user";
+import { Category } from "@/typings/category";
 
 export type Ticket = {
   id: string
@@ -30,8 +30,8 @@ export type TicketUser = {
 }
 
 export enum TicketStatus {
-  Closed,
-  Completed,
-  InProgress,
-  Open,
+  Closed = "Closed",
+  Completed = "Completed",
+  InProgress = "InProgress",
+  Open = "Open",
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {Users} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import Image from "next/image";
-import {Ticket} from "@/typings/ticket";
-import {User, UserRole} from "@/typings/user";
+import { Ticket } from "@/typings/ticket";
+import { User, UserRole } from "@/typings/user";
+import { fetcher } from "@/lib/fetcher";
 
 type ChatDetailsProps = {
   activeTicket: Ticket | null,
@@ -13,30 +14,19 @@ type ChatDetailsProps = {
 
 
 export default function ChatDetails({
-  activeTicket,
-  openTicketDetails,
-}: ChatDetailsProps) {
+                                      activeTicket,
+                                      openTicketDetails,
+                                    }: ChatDetailsProps) {
   const [chatRoom, setChatRoom] = useState({});
   const [chatMembers, setChatMembers] = useState<User[]>([]);
 
   useEffect(() => {
-    const getChatRoom = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `http://localhost:3001/api/v1/tickets/${activeTicket}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await res.json();
+    const getChatRoom = async (ticket: Ticket) => {
+      const data = await fetcher.get(`/tickets/${ticket.id}`);
       setChatRoom(data.data);
     };
 
-    if (activeTicket !== null) getChatRoom();
+    if (activeTicket) getChatRoom(activeTicket);
   }, [activeTicket]);
 
   if (activeTicket === null) return <></>;

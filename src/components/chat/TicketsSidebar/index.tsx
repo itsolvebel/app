@@ -1,8 +1,9 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import NewTicketDialog from "./NewTicketDialog";
 import TicketLoading from "./TicketLoading";
-import {Ticket as TTicket, TicketStatus} from "@/typings/ticket";
+import { Ticket as TTicket, TicketStatus } from "@/typings/ticket";
 import Ticket from "./Ticket";
+import { fetcher } from "@/lib/fetcher";
 
 type ChatSidebarProps = {
   activeTicket: TTicket | null,
@@ -15,37 +16,21 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }: ChatSideb
 
   useEffect(() => {
     const getTickets = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3001/api/v1/tickets`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      setTickets(data.data);
+      await updateTickets();
       setLoadingTickets(false);
     };
     getTickets();
   }, []);
 
   async function updateTickets() {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`http://localhost:3001/api/v1/tickets`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-    setTickets(data.data);
+    const res = await fetcher.get("/tickets");
+    setTickets(res.data);
   }
 
   if (loadingTickets)
     return (
-      <div className="relative flex h-screen min-w-[352px] flex-col items-center justify-between bg-[#FFFFFF] px-6 py-12 transition-all duration-300">
+      <div
+        className="relative flex h-screen min-w-[352px] flex-col items-center justify-between bg-[#FFFFFF] px-6 py-12 transition-all duration-300">
         <div className="flex w-full flex-col items-center">
           <h1 className="text-3xl font-bold text-[#5A8ED1]">Tickets</h1>
           <div className="mt-8 flex w-full flex-col gap-4">
@@ -60,9 +45,9 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }: ChatSideb
         </div>
       </div>
     );
-
   return (
-    <div className="relative flex h-screen min-w-[352px] flex-col items-center justify-between bg-[#FFFFFF] px-6 py-12 transition-all duration-300">
+    <div
+      className="relative flex h-screen min-w-[352px] flex-col items-center justify-between bg-[#FFFFFF] px-6 py-12 transition-all duration-300">
       <div className="flex w-full flex-col items-center">
         <h1 className="text-3xl font-bold text-[#5A8ED1]">Tickets</h1>
         <div className="mt-8 flex w-full flex-col gap-4">

@@ -1,13 +1,15 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatTextArea from "./ChatTextArea";
 
 import Image from "next/image";
-import {Ticket, TicketStatus} from '@/typings/ticket'
-import {TicketMessage} from '@/typings/messages'
-import {useRequest} from "@/hooks/useRequest";
-import {User} from "@/typings/user";
+import { Ticket, TicketStatus } from "@/typings/ticket";
+import { TicketMessage } from "@/typings/messages";
+import { User } from "@/typings/user";
+import { getMe } from "@/lib/auth";
+import { config } from "@/config";
+import { fetcher } from "@/lib/fetcher";
 
 type ChatProps = {
   activeTicket: Ticket | null;
@@ -16,49 +18,34 @@ type ChatProps = {
 }
 
 export default function Chat({
-                 activeTicket,
-                 openTicketDetails,
-                 setOpenTicketDetails,
-               }: ChatProps) {
+                               activeTicket,
+                               openTicketDetails,
+                               setOpenTicketDetails,
+                             }: ChatProps) {
   const [ticket, setTicket] = useState<Ticket>();
   const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
-  const {data: auth}  = useRequest<User>('GET', '/api/auth/me');
+  const [me, setMe] = useState<User>();
   useEffect(() => {
-    const getChatRoom = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `http://localhost:3001/api/v1/tickets/${activeTicket}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await res.json();
+    const getUser = async () => {
+      const user = await getMe();
+      setMe(user);
+    };
+    const getChatRoom = async (ticketId: string) => {
+      const data = await fetcher.get(`/tickets/${ticketId}`);
       setTicket(data.data);
     };
-    if (activeTicket !== null) getChatRoom();
+    if (activeTicket) getChatRoom(activeTicket.id);
+    getUser();
   }, [activeTicket]);
 
   useEffect(() => {
-    const getMessages = async () => {
-      const res = await fetch(
-        `http://localhost:3001/api/v1/tickets/${activeTicket}/messages`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await res.json();
+    const getMessages = async (id: string) => {
+      const data = await fetcher.get(`tickets/${id}/messages`);
       setMessages(data.data);
       setLoadingMessages(false);
     };
-    if (activeTicket !== null) getMessages();
+    if (activeTicket !== null) getMessages(activeTicket.id);
   }, [activeTicket]);
 
   useEffect(() => {
@@ -68,76 +55,70 @@ export default function Chat({
       setMessages([]);
       setLoadingMessages(true);
     },
-    [activeTicket]
+    [activeTicket],
   );
 
   function sendMessage(content: string) {
     if (!ticket) return;
-    if (!auth) return;
+    if (!me) return;
     setMessages((messages) => [
       ...messages,
       {
         id: "0",
         ticket_id: ticket.id,
         content: content,
-        user: auth.id,
+        user: me,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       },
     ]);
 
     const cancelMessage = () => {
-      if (!auth) return;
+      if (!me) return;
 
       const newMessages = [...messages];
       newMessages[newMessages.length] = {
         id: "0",
         content,
-        user: auth.id,
+        user: me,
         ticket_id: ticket.id,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
 
       setMessages(newMessages);
     };
 
     try {
-      fetch(
-        `http://localhost:3001/api/v1/tickets/${activeTicket}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({content}),
-        }
-      ).then((res) => {
-        if (res.status !== 201) {
-          cancelMessage();
-        }
-      });
+      if (activeTicket) {
+        fetcher.post(`tickets/${activeTicket.id}/messages`, { content }).then((res) => {
+          if (res.status !== 201) {
+            cancelMessage();
+          }
+        });
+      }
+
     } catch (e) {
       cancelMessage();
     }
   }
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:3001/ws");
+    const socket = new WebSocket(config.WEBSOCKET_URL);
 
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data);
 
       console.log(data);
-      if (auth && data.user.id === auth.id) {
+      if (me && data.user.id === me.id) {
         const newMessages = [...messages];
         newMessages[newMessages.length] = {
           id: data.id,
           content: data.content,
-          user: auth.id,
+          user: me,
           ticket_id: ticket?.id || "",
           created_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         };
 
         setMessages(newMessages);
@@ -152,13 +133,13 @@ export default function Chat({
           user: data.user.id,
           ticket_id: ticket?.id || "",
           created_at: new Date(),
-          updated_at: new Date()
+          updated_at: new Date(),
         },
       ]);
     };
     return () => {
       socket.close();
-    }
+    };
   }, [activeTicket]);
 
   if (activeTicket === null)
@@ -191,9 +172,9 @@ export default function Chat({
         <ChatBody
           messages={messages}
           loadingMessages={loadingMessages}
-          userId={auth?.id || ""}
+          userId={me?.id || ""}
         />
-        <ChatTextArea sendMessage={sendMessage}/>
+        <ChatTextArea sendMessage={sendMessage} />
       </div>
     </>
   );
