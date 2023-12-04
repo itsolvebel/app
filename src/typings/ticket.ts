@@ -11,8 +11,7 @@ export type Ticket = {
   categories: Category[]
   deadline: Date | null
   budget: Number | null
-  created_at: string
-  updated_at: string
+  created_at: Date
 }
 
 export type NewTicket = {
@@ -34,4 +33,11 @@ export enum TicketStatus {
   Completed = "Completed",
   InProgress = "InProgress",
   Open = "Open",
+}
+
+export const ticketStatusColors = {
+  [TicketStatus.Closed]: "red",
+  [TicketStatus.Completed]: "green",
+  [TicketStatus.InProgress]: "blue",
+  [TicketStatus.Open]: "yellow"
 }

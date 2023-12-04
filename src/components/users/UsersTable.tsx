@@ -8,7 +8,6 @@ import { Category } from '@/typings/category'
 type Props = {
   users: User[]
   roles: UserRole[]
-  categories: Category[]
   fetchUsers: () => void
 }
 
@@ -16,7 +15,7 @@ type UserMap = {
   [key: string]: User
 }
 
-export default function UserTable({ users, roles, categories, fetchUsers }: Props) {
+export default function UserTable({ users, roles, fetchUsers }: Props) {
   const [userMap, setUserMap] = useState<UserMap>({})
   const [hasChanged, setHasChanged] = useState(false)
   const [updatedUsers, setUpdatedUsers] = useState<UserMap>({})
@@ -182,7 +181,7 @@ export default function UserTable({ users, roles, categories, fetchUsers }: Prop
                 <MultiSelect
                   value={userMap[user.id].categories || []}
                   onChange={(e) => handleCategoryChange(user.id, e.value)}
-                  options={categories}
+                  options={Object.values(Category)}
                   display='chip'
                   placeholder='Select Categories'
                   maxSelectedLabels={4}

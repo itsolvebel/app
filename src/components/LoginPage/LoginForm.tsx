@@ -4,19 +4,18 @@ import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { login } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
-import { Simulate } from 'react-dom/test-utils'
 import { FetchingError } from '@/lib/errors'
 
 
 type LoginForm = {
   email_or_username: string;
   password: string;
-};
+}
 
 export default function LoginForm() {
   const router = useRouter()
   const [form, setForm] = useState<LoginForm>(
-    { email_or_username: '', password: '' }
+    { email_or_username: '', password: '' },
   )
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {

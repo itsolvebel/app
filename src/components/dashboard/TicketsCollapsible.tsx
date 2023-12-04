@@ -1,32 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import TicketsTableHead from './TicketsTableHead'
 import TicketsTableItem from './TicketsTableItem'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import {Collapsible, CollapsibleTrigger, Content} from '@radix-ui/react-collapsible'
+import { Collapsible, CollapsibleTrigger, Content } from '@radix-ui/react-collapsible'
 import { Ticket } from '@/typings/ticket'
 
-export default function TicketsCollapsible() {
-  const [tickets, setTickets] = useState<Ticket[]>([])
-  const [open, setOpen] = useState(false)
+type Props = {
+  tickets: Ticket[]
+}
 
-  useEffect(() => {
-    // const getChatsRooms = async () => {
-    //   const token = localStorage.getItem("token");
-    //   const res = await fetch("http://localhost:3001/api/me/chatrooms", {
-    //     method: "GET",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       "auth-token": token,
-    //     },
-    //   });
-    //   const data = await res.json();
-    //   data.data = data.data.filter((chatRoom) => chatRoom.type === "ticket");
-    //   setTickets(data.data);
-    // };
-    // getChatsRooms();
-  }, [])
+export default function TicketsCollapsible({ tickets }: Props) {
+  const [open, setOpen] = useState(false)
 
   return (
     <div className='mx-24 flex flex-col overflow-y-scroll rounded-xl border border-[#00000010]'>
@@ -50,7 +36,7 @@ export default function TicketsCollapsible() {
           </CollapsibleTrigger>
         </div>
         <Content>
-          <table className='w-full border-collapse items-center bg-transparent '>
+          <table className='w-full border-collapse items-center bg-transparent'>
             <TicketsTableHead />
 
             <tbody>
