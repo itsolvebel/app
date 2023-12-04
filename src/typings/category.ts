@@ -1,6 +1,6 @@
 export enum Category {
   Backend,
-  DevOps,
+  Devops,
   Frontend,
   Mobile,
 }
