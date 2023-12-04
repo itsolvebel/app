@@ -7,13 +7,13 @@ import { fetcher } from "@/lib/fetcher";
 
 type ChatSidebarProps = {
   activeTicket: TTicket | null,
-  setActiveTicket: (ticket: TTicket) => void
+  setActiveTicket: (ticket: TTicket) => void,
+  newTicketTitle: string | null
 }
 
-export default function ChatSidebar({ activeTicket, setActiveTicket }: ChatSidebarProps) {
+export default function ChatSidebar({ activeTicket, setActiveTicket, newTicketTitle }: ChatSidebarProps) {
   const [tickets, setTickets] = useState<TTicket[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(true);
-
   useEffect(() => {
     const getTickets = async () => {
       await updateTickets();
@@ -77,7 +77,7 @@ export default function ChatSidebar({ activeTicket, setActiveTicket }: ChatSideb
         <span className="text-center text-sm text-[#FFFFFF87]">
           You can have up to 5 parallel project running at once!
         </span>
-        <NewTicketDialog updateTickets={updateTickets}>
+        <NewTicketDialog updateTickets={updateTickets} title={newTicketTitle}>
           <button className="mt-4 rounded-xl bg-[#F2F2F2] py-2 font-bold text-[#5A8ED1]">
             New ticket
           </button>

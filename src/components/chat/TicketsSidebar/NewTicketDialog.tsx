@@ -8,21 +8,22 @@ import { fetcher } from "@/lib/fetcher";
 
 type NewTicketDialogProps = {
   children: ReactNode | ReactNode[],
-  updateTickets: () => void
+  updateTickets: () => void,
+  title: string | null
 }
 
 
 type NewTicketDialogForm = {
-  title: string,
+  title: string | null,
   description: string,
   categoriesSelected: Category[],
   deadline: Date,
   budget: number
 }
 
-export default function NewTicketDialog({ children, updateTickets }: NewTicketDialogProps) {
+export default function NewTicketDialog({ children, updateTickets, title }: NewTicketDialogProps) {
   const [inputs, setInputs] = useState<NewTicketDialogForm>({
-    title: "",
+    title: title || "",
     description: "",
     categoriesSelected: [],
     // deadlineSelected: false,
@@ -30,7 +31,7 @@ export default function NewTicketDialog({ children, updateTickets }: NewTicketDi
     // budgetSelected: false,
     budget: 0,
   });
-  const [isOpened, setIsOpened] = useState(false);
+  const [isOpened, setIsOpened] = useState(!!title);
   const [error, setError] = useState("");
   const [button, setButton] = useState(1); // 1 = create, 2 = loading, 3 = error
   const [categories, setCategories] = useState<Category[]>([]);
