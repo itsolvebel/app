@@ -1,16 +1,15 @@
 "use client";
 import Image from "next/image";
-import { fetcher } from "@/lib/fetcher";
 import { User } from "@/typings/user";
+import { TicketMsgHelperType, TicketMsgStatus } from "@components/chat/Chat";
 
 type ReceiverMessageProps = {
   user: User,
   content: string,
-  sent: any,
-  error: any
+  messageHelper: TicketMsgHelperType
 }
 
-export default function ReceiverMessage({ user, content, sent, error }: ReceiverMessageProps) {
+export default function ReceiverMessage({ user, content, messageHelper }: ReceiverMessageProps) {
   return (
     <div className="flex w-full flex-row-reverse">
       <div>
@@ -33,13 +32,20 @@ export default function ReceiverMessage({ user, content, sent, error }: Receiver
           />
         )}
       </div>
-      <div className="mr-4">
+      <div className="mr-4" data-message-id={messageHelper.ticket.id}>
         <div className="flex max-w-[30rem] flex-col rounded-l-xl rounded-br-xl bg-[#5A8ED1] px-4 py-3">
           <span
-            className={`break-words text-sm ${
-              // sent !== undefined ? 'text-white/50' : 'text-white'
-              "text-[#f0f0f0]"}
-            // } ${error !== undefined ? "text-[#ff0000]/50" : "text-white"}`}
+            className={`
+              break-words
+              text-sm
+             ${
+              messageHelper.status === TicketMsgStatus.LOADING
+                ? "text-white/50"
+                : messageHelper.status === TicketMsgStatus.ERROR
+                  ? "text-[#cc0000]"
+                  : "text-[#f0f0f0]" // Default color for TicketMsgStatus.OK
+            }
+           `}
           >
             {content}
           </span>

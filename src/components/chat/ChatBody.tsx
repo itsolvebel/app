@@ -5,14 +5,16 @@ import ReceiverMessage from "./ReceiverMessage";
 import SenderMessage from "./SenderMessage";
 import ChatBodyLoader from "./ChatBodyLoader";
 import { TicketMessage } from "@/typings/messages";
+import { TicketMsgHelperType, TicketMsgStatus } from "@components/chat/Chat";
 
 type Props = {
-  messages: TicketMessage[]
+  messageHelpers: TicketMsgHelperType[]
   loadingMessages: boolean
   userId: string
 }
 
-export default function ChatBody({ messages, loadingMessages, userId }: Props) {
+
+export default function ChatBody({ messageHelpers, loadingMessages, userId }: Props) {
   const scrollRef: RefObject<HTMLDivElement> = useRef(null);
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function ChatBody({ messages, loadingMessages, userId }: Props) {
     if (scroll) {
       scroll.scrollTop = scroll.scrollHeight;
     }
-  }, [messages]);
+  }, [messageHelpers]);
 
   if (loadingMessages) return <ChatBodyLoader />;
   return (
@@ -31,23 +33,22 @@ export default function ChatBody({ messages, loadingMessages, userId }: Props) {
       >
         <div className="flex min-h-[100%] flex-col justify-end">
           <div className="flex flex-col gap-4 px-12 py-4">
-            {messages.map((message, i) => {
-              if (message.user.id === userId) {
+            {messageHelpers.map((messageHelper, i) => {
+              if (messageHelper.ticket.user.id === userId) {
                 return (
                   <SenderMessage
-                    key={i}
-                    user={message.user}
-                    content={message.content}
-                    sent={null}
-                    error={null}
+                    key={messageHelper.ticket.id}
+                    user={messageHelper.ticket.user}
+                    content={messageHelper.ticket.content}
+                    messageHelper={messageHelper}
                   />
                 );
               } else {
                 return (
                   <ReceiverMessage
                     key={i}
-                    user={message.user}
-                    content={message.content}
+                    user={messageHelper.ticket.user}
+                    content={messageHelper.ticket.content}
                   />
                 );
               }
