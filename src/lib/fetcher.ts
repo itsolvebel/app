@@ -5,10 +5,15 @@ import { refreshAccessToken } from "@/lib/auth";
 type Fetcher = {
   get(resource: string, options?: RequestInit): Promise<any>;
   post(resource: string, body: any, options?: RequestInit): Promise<any>;
+  setToken(token: string): void;
 }
 
-
+let token: string;
 const Fetcher = (baseUrl: string): Fetcher => {
+  const setToken = (t: string) => {
+    token = t;
+    localStorage.setItem("token", t);
+  };
   const makeRequest = async (method: string, resource: string, options?: RequestInit, body?: any): Promise<any> => {
     resource = filterResourceString(resource);
     const requestOptions: RequestInit = {
@@ -16,6 +21,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
       method,
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token || localStorage.getItem("token")}`,
         ...options?.headers,
       },
       body: body ? JSON.stringify(body) : undefined,
@@ -23,7 +29,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
     };
 
     const response = await fetch(`${baseUrl}${resource}`, requestOptions);
-    
+
     if (response.status === 401) {
       const res = await refreshAccessToken();
       if (res.ok && response.status !== 401) {
@@ -51,7 +57,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
     return makeRequest("POST", resource, options, body);
   };
 
-  return { get, post };
+  return { get, post, setToken };
 };
 
 const filterResourceString = (resource: string) => {

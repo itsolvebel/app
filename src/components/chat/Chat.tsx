@@ -27,6 +27,9 @@ export default function Chat({
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [me, setMe] = useState<User>();
   useEffect(() => {
+
+    if (activeTicket === null) return;
+
     const getUser = async () => {
       const user = await getMe();
       setMe(user);
@@ -48,16 +51,6 @@ export default function Chat({
     if (activeTicket !== null) getMessages(activeTicket.id);
   }, [activeTicket]);
 
-  useEffect(() => {
-      if (activeTicket === null) return;
-
-      setTicket(undefined);
-      setMessages([]);
-      setLoadingMessages(true);
-    },
-    [activeTicket],
-  );
-
   function sendMessage(content: string) {
     if (!ticket) return;
     if (!me) return;
@@ -72,7 +65,6 @@ export default function Chat({
         updated_at: new Date(),
       },
     ]);
-
     const cancelMessage = () => {
       if (!me) return;
 
@@ -98,6 +90,7 @@ export default function Chat({
         });
       }
 
+
     } catch (e) {
       cancelMessage();
     }
@@ -107,9 +100,9 @@ export default function Chat({
     const socket = new WebSocket(config.WEBSOCKET_URL);
 
     socket.onmessage = (e) => {
+
       const data = JSON.parse(e.data);
 
-      console.log(data);
       if (me && data.user.id === me.id) {
         const newMessages = [...messages];
         newMessages[newMessages.length] = {
@@ -130,7 +123,7 @@ export default function Chat({
         {
           id: "0",
           content: data.content,
-          user: data.user.id,
+          user: data.user,
           ticket_id: ticket?.id || "",
           created_at: new Date(),
           updated_at: new Date(),

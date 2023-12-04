@@ -14,8 +14,7 @@ export async function middleware(req: NextRequest) {
     console.error(err);
     return;
   });
-  console.log(accessToken);
-  console.log(refreshToken);
+
   // const redirectUrls = [
   //   '/login', '/register',
   // ]

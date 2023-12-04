@@ -1,18 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import {User} from "@/typings/user";
+import { User } from "@/typings/user";
 
 type ReceiverMessageProps = {
-    user: User,
-    content: String
+  user: User,
+  content: String
 }
 
 export default function ReceiverMessage({ user, content }: ReceiverMessageProps) {
   return (
     <div className="flex">
       <div>
-        {user.avatar_url === null ? (
+        {!user.avatar_url ? (
           <div>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFFFFF]">
               <p className="text-sm font-bold text-[#ABABAD]">
