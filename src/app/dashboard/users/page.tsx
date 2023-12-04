@@ -11,14 +11,12 @@ import { fetcher } from "@/lib/fetcher";
 export default function UserDashboard() {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState<UserRole[]>(getAllUserRoles);
-  const [categories, setCategories] = useState([]);
 
   const abortControllerRef = useRef<AbortController>();
 
   useEffect(() => {
     abortControllerRef.current = new AbortController();
     fetchUsers();
-    fetchCategories();
 
     return () => {
       abortControllerRef.current?.abort();
@@ -27,7 +25,7 @@ export default function UserDashboard() {
   const fetchUsers = () => {
     const token = localStorage.getItem("token");
 
-    fetcher.get("/users/", {
+    fetcher.get("/users", {
       signal: abortControllerRef.current?.signal,
     }).then((res) => {
       setUsers(res.data);
@@ -37,15 +35,11 @@ export default function UserDashboard() {
       abortControllerRef.current?.abort();
     };
   };
-  const fetchCategories = () => {
-    fetcher.get("/categories").then(res => setCategories(res.data));
-  };
-
 
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <UserTable users={users} fetchUsers={fetchUsers} categories={categories} roles={roles}></UserTable>
+      <UserTable users={users} fetchUsers={fetchUsers} roles={roles}></UserTable>
     </div>
   );
 }

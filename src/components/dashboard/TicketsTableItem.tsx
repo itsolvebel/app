@@ -1,13 +1,14 @@
 import { MoreHorizontal } from 'lucide-react'
 import Image from 'next/image'
-import { Ticket, TicketStatus } from '@/typings/ticket'
+import { Ticket, TicketStatus, ticketStatusColors } from '@/typings/ticket'
+import { formatDateTime } from '@/utils/date_utils'
 
 export default function TicketsTableItem({ ticket }: { ticket: Ticket }) {
   return (
     <tr>
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700 '>
-        #{ticket.id}
+        {ticket.id}
       </th>
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700 '>
@@ -16,26 +17,35 @@ export default function TicketsTableItem({ ticket }: { ticket: Ticket }) {
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700'>
         <span
-          className={`rounded-xl py-1 px-3 ${
-            ticket.status === TicketStatus.Open
-              ? 'bg-green-500/20 text-green-700'
-              : 'bg-red-500/20 text-red-700'
-          }`}
+          className={`rounded-xl py-1 px-3 bg-${ticketStatusColors[ticket.status]}-500/20 text-${ticketStatusColors[ticket.status]}-700`}
         >
           {ticket.status}
         </span>
       </th>
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700 '>
-        {ticket.user ? (
+        {ticket.status != TicketStatus.Open ? (
           <div className='flex items-center'>
-            <Image
-              src={ticket.user.avatar_url!}
-              width={30}
-              height={30}
-              className='rounded-full'
-              alt={`${ticket.user.first_name} ${ticket.user.last_name}`}
-            />
+            {ticket.user.avatar_url !== null ? (
+              <div className="">
+                <Image
+                  src={ticket.user.avatar_url}
+                  alt="Avatar"
+                  width={30}
+                  height={30}
+                  className="rounded-full"
+                />
+              </div>
+            ) : (
+              <div>
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E7F1FF]">
+                  <p className="text-xs font-bold text-[#ABABAD]">
+                    {ticket.user.first_name.charAt(0).toUpperCase() +
+                      ticket.user.last_name.charAt(0).toUpperCase()}
+                  </p>
+                </div>
+              </div>
+            )}
             <span className='ml-2'>
               {ticket.user.first_name} {ticket.user.last_name}
             </span>
@@ -46,7 +56,7 @@ export default function TicketsTableItem({ ticket }: { ticket: Ticket }) {
       </th>
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700 '>
-        {ticket.created_at.split('T')[0]}
+        {formatDateTime(ticket.created_at)}
       </th>
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700 '>
