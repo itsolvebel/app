@@ -17,6 +17,17 @@ type ChatProps = {
   setOpenTicketDetails: (open: boolean) => void;
 }
 
+enum TicketMsgStatus {
+  LOADING,
+  OK,
+  ERROR
+}
+
+type TicketMsgHelperType = {
+  ticket: TicketMessage,
+  status: TicketMsgStatus
+}
+
 export default function Chat({
                                activeTicket,
                                openTicketDetails,
