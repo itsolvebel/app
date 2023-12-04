@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Ticket } from "@/typings/ticket";
 import { User, UserRole } from "@/typings/user";
 import { fetcher } from "@/lib/fetcher";
+import { getMe, getUserRoles } from "@/lib/auth";
 
 type ChatDetailsProps = {
   activeTicket: Ticket | null,
@@ -19,18 +20,25 @@ export default function ChatDetails({
                                     }: ChatDetailsProps) {
   const [chatRoom, setChatRoom] = useState({});
   const [chatMembers, setChatMembers] = useState<User[]>([]);
-
+  const [canManage, setCanManage] = useState(false);
   useEffect(() => {
     const getChatRoom = async (ticket: Ticket) => {
-      const data = await fetcher.get(`/tickets/${ticket.id}`);
-      setChatRoom(data.data);
+
+      const { isAdmin, isTm } = await getUserRoles();
+      setCanManage(isAdmin || isTm);
+      const res = await fetcher.get(`/tickets/${ticket.id}`);
+      const me = await getMe();
+      const members = res.data.users;
+      members.unshift(me);
+      setChatMembers(members);
+      setChatRoom(res.data);
     };
 
     if (activeTicket) getChatRoom(activeTicket);
   }, [activeTicket]);
 
   if (activeTicket === null) return <></>;
-
+  console.log(canManage);
   return (
     <>
       <div
@@ -44,15 +52,19 @@ export default function ChatDetails({
           </span>
         </div>
         <div className="mt-10 flex flex-col">
+          {/* The button to add a new user*/}
+          <div>
+
+          </div>
           <span className="flex items-center gap-2 text-sm font-medium text-[#ABABAD]">
             <Users color="#ABABAD" size={20} />
             Members
             <span className="rounded-sm bg-[#EAFAFE] px-3 text-xs text-[#75A9BC]">
-              {chatMembers.length}
+              {chatMembers?.length || 0}
             </span>
           </span>
           <div className="mt-5 flex flex-col gap-4">
-            {chatMembers.map((member) => (
+            {chatMembers && chatMembers.map((member) => (
               <div
                 key={member.id}
                 className="flex items-center gap-3 text-sm font-medium text-[#000000]"

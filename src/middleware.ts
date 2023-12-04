@@ -1,43 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 import { refreshAccessToken, verifyJwtToken } from "@/lib/auth";
 
+const PUBLIC_ROUTES = ["/login", "/register"];
+
+// export async function middleware(req: NextRequest) { //TODO IMPLEMENT COOKIES AGAIN
+//
+//   if (PUBLIC_ROUTES.some(route => req.nextUrl.pathname.startsWith(route))) {
+//     return null;
+//   }
+//   const accessToken = req.cookies.get("access_token")?.value;
+//   const refreshToken = req.cookies.get("refresh_token")?.value;
+//   const verifiedAccessToken = accessToken && await verifyJwtToken(accessToken).catch((err) => {
+//     console.error(err);
+//     return;
+//   });
+//   const verifiedRefreshToken = refreshToken && await verifyJwtToken(refreshToken).catch((err) => {
+//     console.error(err);
+//     return;
+//   });
+//
+//   if (!verifiedAccessToken && !verifiedRefreshToken) {
+//     return NextResponse.redirect(new URL("/login", req.url));
+//   }
+//   // Access token revoked but refresh token ok, so get a new access token before continuing.
+//   if (!verifiedAccessToken && verifiedRefreshToken) {
+//     try {
+//       await refreshAccessToken();
+//     } catch {
+//       return NextResponse.redirect(new URL("/login", req.url));
+//     }
+//     return;
+//   }
+// }
+
 export async function middleware(req: NextRequest) {
 
-
-  const accessToken = req.cookies.get("access_token")?.value;
-  const refreshToken = req.cookies.get("refresh_token")?.value;
+  if (PUBLIC_ROUTES.some(route => req.nextUrl.pathname.startsWith(route))) {
+    return null;
+  }
+  const accessToken = req.cookies.get("token")?.value;
   const verifiedAccessToken = accessToken && await verifyJwtToken(accessToken).catch((err) => {
     console.error(err);
     return;
   });
-  const verifiedRefreshToken = refreshToken && await verifyJwtToken(refreshToken).catch((err) => {
-    console.error(err);
-    return;
-  });
 
-  // const redirectUrls = [
-  //   '/login', '/register',
-  // ]
-  // if (verifiedAccessToken && verifiedRefreshToken) {
-  //   if (redirectUrls.some(url => req.nextUrl.pathname.startsWith(url))) {
-  //     NextResponse.redirect(new URL('/', req.url))
-  //   }
-  // }
 
-  if (!verifiedAccessToken && !verifiedRefreshToken) {
+  if (!verifiedAccessToken) {
     return NextResponse.redirect(new URL("/login", req.url));
-  }
-  // Access token revoked but refresh token ok, so get a new access token before continuing.
-  if (!verifiedAccessToken && verifiedRefreshToken) {
-    try {
-      await refreshAccessToken();
-    } catch {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-    return;
   }
 }
 
-export const config = {
-  matcher: ["/dashboard/:path*"],
-};
+export const config = { matcher: "/((?!.*\\.).*)" };

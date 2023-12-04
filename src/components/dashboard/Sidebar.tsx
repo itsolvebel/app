@@ -24,45 +24,45 @@ export default function Sidebar() {
     {
       name: "Dashboard",
       icon: LayoutGrid,
-      href: "/dashboard",
+      href: "/",
       whoAccess: [UserRole.Admin, UserRole.Tm],
     },
     {
       name: "Users",
       icon: Users,
-      href: "/dashboard/users",
+      href: "/users",
       whoAccess: [UserRole.Admin],
     },
     // {
     //   name: "Chat",
     //   icon: MessageCircle,
-    //   href: "/dashboard/chat",
+    //   href: "/chat",
     //   whoAccess: [UserRole.Admin, UserRole.Tm, UserRole.Freelancer],
     // },
     /*{
       WILL COME LATER
       name: "Calendar",
       icon: CalendarDays,
-      href: "/dashboard/calendar",
+      href: "/calendar",
       whoAccess: ["Admin", "Tm", "Freelancer"],
     },*/
     {
       name: "Tickets",
       icon: Ticket,
-      href: "/dashboard/tickets",
+      href: "/tickets",
       whoAccess: [UserRole.User, UserRole.Admin, UserRole.Tm, UserRole.Freelancer],
     },
     /*{
       WILL COME LATER
       name: "Files",
       icon: File,
-      href: "/dashboard/files",
+      href: "/files",
       whoAccess: ["Admin"],
     },*/
     {
       name: "Settings",
       icon: Settings,
-      href: "/dashboard/settings",
+      href: "/settings",
       whoAccess: [UserRole.User, UserRole.Admin, UserRole.Tm, UserRole.Freelancer],
     },
   ];
@@ -77,7 +77,14 @@ export default function Sidebar() {
     fetchMe();
   });
 
+  function logUserOut() {
+    logout().then(() => {
+      window.location.href = "/";
+    });
+  }
+
   if (isLoading || !me) return null;
+
 
   return (
     <div
@@ -158,7 +165,7 @@ export default function Sidebar() {
             </span>
             <span
               className="cursor-pointer text-sm font-medium"
-              onClick={logout}
+              onClick={() => logUserOut()}
             >
               Logout
             </span>

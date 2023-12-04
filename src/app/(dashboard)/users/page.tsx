@@ -31,7 +31,9 @@ export default function UserDashboard() {
     }).then((res) => {
       setUsers(res.data);
     }).catch(err => {
-      console.log(err);
+      if (!abortControllerRef.current?.signal.aborted) {
+        console.log(err);
+      }
     });
 
     return () => {

@@ -1,10 +1,12 @@
 import { config } from "@/config";
 import { FetchingError } from "@/lib/errors";
 import { refreshAccessToken } from "@/lib/auth";
+import Cookies from "js-cookie";
 
 type Fetcher = {
   get(resource: string, options?: RequestInit): Promise<any>;
   post(resource: string, body: any, options?: RequestInit): Promise<any>;
+  put(resource: string, body: any, options?: RequestInit): Promise<any>;
   setToken(token: string): void;
 }
 
@@ -13,6 +15,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
   const setToken = (t: string) => {
     token = t;
     localStorage.setItem("token", t);
+    Cookies.set("token", token, { expires: 9999999, sameSite: "None" });
   };
   const makeRequest = async (method: string, resource: string, options?: RequestInit, body?: any): Promise<any> => {
     resource = filterResourceString(resource);
@@ -56,8 +59,11 @@ const Fetcher = (baseUrl: string): Fetcher => {
   const post = async (resource: string, body: any, options?: RequestInit): Promise<any> => {
     return makeRequest("POST", resource, options, body);
   };
+  const put = async (resource: string, body: any, options?: RequestInit): Promise<any> => {
+    return makeRequest("PUT", resource, options, body);
+  };
 
-  return { get, post, setToken };
+  return { get, post, put, setToken };
 };
 
 const filterResourceString = (resource: string) => {

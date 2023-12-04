@@ -41,7 +41,7 @@ export async function refreshAccessToken() {
 
 export async function logout() {
   try {
-    await fetch(`${config.BACKEND_URL}/auth/logout`, { method: "POST" });
+    await fetcher.post("/auth/logout", {});
   } catch (e) {
     throw new Error("There was an issue with logging out");
   }
@@ -85,7 +85,7 @@ export type GetUserRolesData = {
 
 export async function getUserRoles(invalidate = false): Promise<GetUserRolesData> {
   try {
-    const data = await getMe();
+    const data = cachedUser || await getMe();
 
     const roles: UserRole[] = data.roles || [];
 

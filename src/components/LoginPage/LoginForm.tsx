@@ -28,7 +28,7 @@ export default function LoginForm() {
     e.preventDefault();
     login(form).then(res => {
       fetcher.setToken(res.access_token);
-      router.replace("/dashboard");
+      router.replace("/");
     }).catch(error => {
       if (error instanceof FetchingError) {
         if (error.statusCode === 401) {
