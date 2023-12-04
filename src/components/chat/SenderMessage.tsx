@@ -38,8 +38,8 @@ export default function ReceiverMessage({ user, content, sent, error }: Receiver
           <span
             className={`break-words text-sm ${
               // sent !== undefined ? 'text-white/50' : 'text-white'
-              "text-[#f0f0f0]"
-            } ${error !== undefined ? "text-[#ff0000]/50" : "text-white"}`}
+              "text-[#f0f0f0]"}
+            // } ${error !== undefined ? "text-[#ff0000]/50" : "text-white"}`}
           >
             {content}
           </span>

@@ -4,6 +4,7 @@ import { User, UserRole } from "@/typings/user";
 import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
 import { FetchingError } from "@/lib/errors";
+import Cookies from "js-cookie";
 
 export async function verifyJwtToken(token: string) {
   // const secret = process.env.TOKEN_SECRET
@@ -41,6 +42,8 @@ export async function refreshAccessToken() {
 
 export async function logout() {
   try {
+    Cookies.remove("token"); //TODO remove this when auth fixed
+    localStorage.removeItem("token");
     await fetcher.post("/auth/logout", {});
   } catch (e) {
     throw new Error("There was an issue with logging out");

@@ -38,7 +38,6 @@ export default function ChatDetails({
   }, [activeTicket]);
 
   if (activeTicket === null) return <></>;
-  console.log(canManage);
   return (
     <>
       <div

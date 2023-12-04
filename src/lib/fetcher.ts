@@ -15,7 +15,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
   const setToken = (t: string) => {
     token = t;
     localStorage.setItem("token", t);
-    Cookies.set("token", token, { expires: 9999999, sameSite: "None" });
+    Cookies.set("token", token, { expires: 9999999, sameSite: "None", secure: true });
   };
   const makeRequest = async (method: string, resource: string, options?: RequestInit, body?: any): Promise<any> => {
     resource = filterResourceString(resource);
