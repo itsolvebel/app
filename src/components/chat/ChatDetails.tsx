@@ -13,13 +13,17 @@ type ChatDetailsProps = {
   openTicketDetails: boolean,
 }
 
-
+type ChatDetailsUser = {
+  role: string,
+  user: User
+}
 export default function ChatDetails({
                                       activeTicket,
                                       openTicketDetails,
                                     }: ChatDetailsProps) {
   const [chatRoom, setChatRoom] = useState({});
   const [chatMembers, setChatMembers] = useState<User[]>([]);
+  const [chatDetailUsers, setChatDetailUsers] = useState<ChatDetailsUser[]>([]);
   const [canManage, setCanManage] = useState(false);
   useEffect(() => {
     const getChatRoom = async (ticket: Ticket) => {
@@ -28,9 +32,15 @@ export default function ChatDetails({
       setCanManage(isAdmin || isTm);
       const res = await fetcher.get(`/tickets/${ticket.id}`);
       const me = await getMe();
-      const members = res.data.users;
-      members.unshift(me);
-      setChatMembers(members);
+      const detailUsers = res.data.users;
+      detailUsers.unshift({
+        user: me,
+        role: "creator",
+      });
+      const users = detailUsers.map((dUser: ChatDetailsUser) => dUser.user);
+      users.unshift(me);
+      setChatMembers(detailUsers);
+      setChatDetailUsers(detailUsers);
       setChatRoom(res.data);
     };
 
@@ -59,52 +69,54 @@ export default function ChatDetails({
             <Users color="#ABABAD" size={20} />
             Members
             <span className="rounded-sm bg-[#EAFAFE] px-3 text-xs text-[#75A9BC]">
-              {chatMembers?.length || 0}
+              {chatDetailUsers?.length || 0}
             </span>
           </span>
           <div className="mt-5 flex flex-col gap-4">
-            {chatMembers && chatMembers.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center gap-3 text-sm font-medium text-[#000000]"
-              >
-                {member.avatar_url === null ? (
-                  <div>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E7F1FF]">
-                      <p className="text-sm font-bold text-[#ABABAD]">
-                        {member.first_name.charAt(0) + member.last_name.charAt(0)}
-                      </p>
+            {chatDetailUsers && chatDetailUsers.map((member) => {
+              return (
+                <div
+                  key={member.user.id}
+                  className="flex items-center gap-3 text-sm font-medium text-[#000000]"
+                >
+                  {member.user.avatar_url === null ? (
+                    <div>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E7F1FF]">
+                        <p className="text-sm font-bold text-[#ABABAD]">
+                          {member.user.first_name.charAt(0) + member.user.last_name.charAt(0)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <Image
-                    src={member.avatar_url}
-                    alt="Picture of the author"
-                    width={35}
-                    height={35}
-                    className="rounded-full"
-                  />
-                )}
-                <div className="flex flex-col">
-                  {member.first_name} {member.last_name}
-                  {member.roles.includes(UserRole.Admin) ? (
-                    <span className="text-xs text-[#ABABAD]">
+                  ) : (
+                    <Image
+                      src={member.user.avatar_url}
+                      alt="Picture of the author"
+                      width={35}
+                      height={35}
+                      className="rounded-full"
+                    />
+                  )}
+                  <div className="flex flex-col">
+                    {member.user.first_name} {member.user.last_name}
+                    {member.user.roles.includes(UserRole.Admin) ? (
+                      <span className="text-xs text-[#ABABAD]">
                       Administrator
                     </span>
-                  ) : member.roles.includes(UserRole.Tm) ? (
-                    <span className="text-xs text-[#ABABAD]">
+                    ) : member.user.roles.includes(UserRole.Tm) ? (
+                      <span className="text-xs text-[#ABABAD]">
                       Ticket Manager
                     </span>
-                  ) : member.roles.includes(UserRole.Freelancer) ? (
-                    <span className="text-xs text-[#ABABAD]">
-                      {member.categories.toString() /*Not sure what needed to happen here, it previously was member.work*/}
+                    ) : member.user.roles.includes(UserRole.Freelancer) ? (
+                      <span className="text-xs text-[#ABABAD]">
+                      {member.user.categories.toString() /*Not sure what needed to happen here, it previously was member.work*/}
                     </span>
-                  ) : (
-                    <span className="text-xs text-[#ABABAD]">Client</span>
-                  )}
+                    ) : (
+                      <span className="text-xs text-[#ABABAD]">Client</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

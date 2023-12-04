@@ -17,13 +17,36 @@ type ChatProps = {
   setOpenTicketDetails: (open: boolean) => void;
 }
 
+export enum TicketMsgStatus {
+  LOADING,
+  OK,
+  ERROR
+}
+
+export type TicketMsgHelperType = {
+  ticket: TicketMessage,
+  status: TicketMsgStatus
+}
+
+function toTicketMessageHelper(ticketMessage: TicketMessage, status = TicketMsgStatus.OK) {
+  return {
+    ticket: ticketMessage,
+    status: status,
+  };
+}
+
+const generateRandomId = () => {
+  const time = Math.floor(Date.now()).toString();
+  const randomInt = Math.floor(Math.random() * 100);
+  return time + randomInt.toString();
+};
 export default function Chat({
                                activeTicket,
                                openTicketDetails,
                                setOpenTicketDetails,
                              }: ChatProps) {
   const [ticket, setTicket] = useState<Ticket>();
-  const [messages, setMessages] = useState<TicketMessage[]>([]);
+  const [messages, setMessages] = useState<TicketMsgHelperType[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [me, setMe] = useState<User>();
   useEffect(() => {
@@ -42,10 +65,11 @@ export default function Chat({
     getUser();
   }, [activeTicket]);
 
+
   useEffect(() => {
     const getMessages = async (id: string) => {
       const data = await fetcher.get(`tickets/${id}/messages`);
-      setMessages(data.data);
+      setMessages(data.data.map((msg: TicketMessage) => toTicketMessageHelper(msg)));
       setLoadingMessages(false);
     };
     if (activeTicket !== null) getMessages(activeTicket.id);
@@ -54,39 +78,61 @@ export default function Chat({
   function sendMessage(content: string) {
     if (!ticket) return;
     if (!me) return;
-    setMessages((messages) => [
-      ...messages,
-      {
-        id: "0",
+
+
+    const randomId = generateRandomId();
+    const newTicketMessage: TicketMsgHelperType = {
+      ticket: {
+        id: randomId,
         ticket_id: ticket.id,
         content: content,
         user: me,
         created_at: new Date(),
         updated_at: new Date(),
       },
-    ]);
+      status: TicketMsgStatus.LOADING,
+    };
+    setMessages((messages) => {
+      return [...messages, newTicketMessage];
+    });
+
     const cancelMessage = () => {
       if (!me) return;
 
-      const newMessages = [...messages];
-      newMessages[newMessages.length] = {
-        id: "0",
-        content,
-        user: me,
-        ticket_id: ticket.id,
-        created_at: new Date(),
-        updated_at: new Date(),
-      };
+      // const newMessages = [...messages]; TODO
+      // newMessages[newMessages.length] = {
+      //   id: "0",
+      //   content,
+      //   user: me,
+      //   ticket_id: ticket.id,
+      //   created_at: new Date(),
+      //   updated_at: new Date(),
+      // };
 
-      setMessages(newMessages);
+      // setMessages(newMessages);
     };
 
     try {
       if (activeTicket) {
         fetcher.post(`tickets/${activeTicket.id}/messages`, { content }).then((res) => {
-          if (res.status !== 201) {
-            cancelMessage();
-          }
+          setMessages((messages) => {
+            const index = messages.findIndex((message) => {
+              return message.ticket.id === randomId;
+            });
+            if (index === -1) {
+              return messages;
+            }
+            return messages.filter((_, idx) => idx !== index);
+          });
+        }).catch(err => {
+          setMessages((messages) => {
+            return messages.map((message) =>
+              message.ticket.id === randomId ? {
+                ...message,
+                status: TicketMsgStatus.ERROR,
+              } : message,
+            );
+          });
         });
       }
 
@@ -102,31 +148,41 @@ export default function Chat({
     socket.onmessage = (e) => {
 
       const data = JSON.parse(e.data);
+      // if (me && data.user.id === me.id) {
+      //   const newMessages = [...messages];
+      //   const newTicketMessage = {
+      //     ticket: {
+      //
+      //     }
+      //   }
+      //   newMessages[newMessages.length] = {
+      //     id: data.id,
+      //     content: data.content,
+      //     user: me,
+      //     ticket_id: ticket?.id || "",
+      //     created_at: new Date(),
+      //     updated_at: new Date(),
+      //   };
+      //
+      //   setMessages(newMessages);
+      //   return;
+      // }
 
-      if (me && data.user.id === me.id) {
-        const newMessages = [...messages];
-        newMessages[newMessages.length] = {
-          id: data.id,
-          content: data.content,
-          user: me,
-          ticket_id: ticket?.id || "",
-          created_at: new Date(),
-          updated_at: new Date(),
-        };
-
-        setMessages(newMessages);
-        return;
-      }
+      const newTicketMessage: TicketMessage = {
+        id: data.id,
+        content: data.content,
+        user: data.user,
+        ticket_id: ticket?.id || "",
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
 
       setMessages((messages) => [
         ...messages,
         {
-          id: "0",
-          content: data.content,
-          user: data.user,
-          ticket_id: ticket?.id || "",
-          created_at: new Date(),
-          updated_at: new Date(),
+          key: newTicketMessage.id,
+          ticket: newTicketMessage,
+          status: TicketMsgStatus.OK,
         },
       ]);
     };
@@ -163,7 +219,7 @@ export default function Chat({
           setOpenTicketDetails={setOpenTicketDetails}
         />
         <ChatBody
-          messages={messages}
+          messageHelpers={messages}
           loadingMessages={loadingMessages}
           userId={me?.id || ""}
         />
