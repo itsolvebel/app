@@ -23,7 +23,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
     };
 
     const response = await fetch(`${baseUrl}${resource}`, requestOptions);
-
+    
     if (response.status === 401) {
       const res = await refreshAccessToken();
       if (res.ok && response.status !== 401) {
