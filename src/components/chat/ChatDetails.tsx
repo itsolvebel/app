@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import Image from "next/image";
 import { Ticket } from "@/typings/ticket";
 import { User, UserRole } from "@/typings/user";
@@ -60,11 +60,17 @@ export default function ChatDetails({
             Chat Details
           </span>
         </div>
-        <div className="mt-10 flex flex-col">
-          {/* The button to add a new user*/}
-          <div>
+        {canManage && (<div>
+          <button
+            className={"my-4 rounded-xl bg-[#F2F2F2] p-2 w-full font-bold text-[#5A8ED1] border-2 border-[#5A8ED1] flex justify-start"}>
+            <Plus className={"mr-2"}></Plus>
+            Add
+            user
+          </button>
+        </div>)}
 
-          </div>
+        <div className="flex flex-col">
+          {/* The button to add a new user*/}
           <span className="flex items-center gap-2 text-sm font-medium text-[#ABABAD]">
             <Users color="#ABABAD" size={20} />
             Members
