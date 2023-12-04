@@ -1,4 +1,4 @@
-import {Ticket} from "@/typings/ticket";
+import { Ticket } from "@/typings/ticket";
 
 function formatDate(date: string) {
   const d = new Date(date);
@@ -11,6 +11,7 @@ function formatDate(date: string) {
 
   return [month, day, year].join("/");
 }
+
 type TicketProps = {
   ticket: Ticket,
   activeTicket: Ticket | null,
@@ -35,7 +36,7 @@ export default function Ticket({ ticket, activeTicket, setActiveTicket }: Ticket
           <span className="text-xs">{ticket.status}</span>
         </div>
         <span className="text-xs opacity-50">
-          {ticket.updated_at !== undefined ? formatDate(ticket.updated_at) : ""}
+          {/*{ticket.updated_at !== undefined ? formatDate(ticket.updated_at) : ""} TODO*/}
         </span>
       </div>
     </div>
