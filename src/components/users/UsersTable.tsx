@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MultiSelect } from "primereact/multiselect";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { UsersTableHead } from "./UsersTableHead";
 import { User, UserRole } from "@/typings/user";
 import { Category } from "@/typings/category";
@@ -138,7 +138,6 @@ export default function UserTable({ users, roles, fetchUsers }: Props) {
 
   return (
     <div className={"flex h-screen w-full flex-col"}>
-      <Toaster />
       <div className="flex justify-between px-8 py-4">
         <div>
           <h1 className="text-xl font-bold">Users</h1>

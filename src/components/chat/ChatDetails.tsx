@@ -4,11 +4,12 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { Plus, Users, X } from "lucide-react";
 import Image from "next/image";
 import { Ticket } from "@/typings/ticket";
-import { User, UserRole } from "@/typings/user";
+import { getAllUserRoles, User, UserRole } from "@/typings/user";
 import { fetcher } from "@/lib/fetcher";
-import { getMe, getUserRoles } from "@/lib/auth";
+import { getUserRoles } from "@/lib/auth";
 import { Dropdown, DropdownProps } from "primereact/dropdown";
 import * as Popover from "@radix-ui/react-popover";
+import toast from "react-hot-toast";
 
 type ChatDetailsProps = {
   activeTicket: Ticket | null,
@@ -28,25 +29,24 @@ export default function ChatDetails({
   const [chatDetailUsers, setChatDetailUsers] = useState<ChatDetailsUser[]>([]);
   const [canManage, setCanManage] = useState(false);
   useEffect(() => {
-    const getChatRoom = async (ticket: Ticket) => {
-
-      const { isAdmin, isTm } = await getUserRoles();
-      setCanManage(isAdmin || isTm);
-      const res = await fetcher.get(`/tickets/${ticket.id}`);
-      const detailUsers = res.data.users;
-      detailUsers.unshift({
-        user: res.data.user,
-        role: "Client",
-      });
-      const users = detailUsers.map((dUser: ChatDetailsUser) => dUser.user);
-      users.unshift(res.data.user);
-      setChatMembers(detailUsers);
-      setChatDetailUsers(detailUsers);
-      setChatRoom(res.data);
-    };
-
     if (activeTicket) getChatRoom(activeTicket);
   }, [activeTicket]);
+  const getChatRoom = async (ticket: Ticket) => {
+
+    const { isAdmin, isTm } = await getUserRoles();
+    setCanManage(isAdmin || isTm);
+    const res = await fetcher.get(`/tickets/${ticket.id}`);
+    const detailUsers = res.data.users;
+    detailUsers.unshift({
+      user: res.data.user,
+      role: "Client",
+    });
+    const users = detailUsers.map((dUser: ChatDetailsUser) => dUser.user);
+    users.unshift(res.data.user);
+    setChatMembers(detailUsers);
+    setChatDetailUsers(detailUsers);
+    setChatRoom(res.data);
+  };
 
   if (activeTicket === null) return <></>;
   return (
@@ -62,7 +62,8 @@ export default function ChatDetails({
           </span>
         </div>
         {canManage && (<div>
-          <AddUserPopover chatUsers={chatDetailUsers} />
+          <AddUserPopover chatUsers={chatDetailUsers} ticket={activeTicket}
+                          updateMembers={() => getChatRoom(activeTicket)} />
         </div>)}
 
         <div className="flex flex-col">
@@ -132,10 +133,19 @@ function UserAvatarReplacement({ user }: { user: User }) {
   </div>);
 }
 
-function AddUserPopover({ chatUsers }: { chatUsers: ChatDetailsUser[] }) {
+type ChatUserPopoverProps = {
+  chatUsers: ChatDetailsUser[],
+  ticket: Ticket,
+  updateMembers: () => Promise<void>;
+}
+
+function AddUserPopover({ chatUsers, ticket, updateMembers }: ChatUserPopoverProps) {
 
   const [users, setUsers] = useState<User[]>();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const roles = getAllUserRoles();
 
   function fetchUsers() {
     fetcher.get("/users").then(res => {
@@ -163,7 +173,6 @@ function AddUserPopover({ chatUsers }: { chatUsers: ChatDetailsUser[] }) {
     </div>);
   }
 
-
   function selectedOptionTemplate(option: User, props: DropdownProps): ReactNode {
     if (option) {
       return (<div className={"flex items-center gap-3"}>
@@ -180,8 +189,37 @@ function AddUserPopover({ chatUsers }: { chatUsers: ChatDetailsUser[] }) {
 
   }
 
+
+  function handleAddUserClick() {
+    setPopoverOpen(false);
+
+    async function addUser(selectedUser: User | null, role: UserRole | null) {
+      if (!selectedUser || !role) {
+        throw new Error("No user and/or role was selected!");
+      }
+
+      return await fetcher.post(`/tickets/${ticket.id}/users`, {
+        user_id: selectedUser.id,
+        role: role,
+      }).then(res => {
+        fetchUsers();
+        updateMembers();
+      }).catch((err) => {
+        console.log(err);
+        throw new Error();
+      });
+
+    }
+
+    const toastId = toast.promise(addUser(selectedUser, selectedRole), {
+      loading: "Adding user...",
+      success: "Successfully added the user!",
+      error: "There was an error while adding the user. Please try again. If this keeps happening, please contact support.",
+    });
+  }
+
   return (
-    <Popover.Root>
+    <Popover.Root open={popoverOpen} onOpenChange={change => setPopoverOpen(change)}>
       <Popover.Trigger asChild>
         <button
           onClick={handlePopoverOpen}
@@ -201,13 +239,21 @@ function AddUserPopover({ chatUsers }: { chatUsers: ChatDetailsUser[] }) {
               placeholder="Select a user"
               value={selectedUser} onChange={(e) => setSelectedUser(e.value)}
               options={users}
-              optionLabel="first_naem"
+              optionLabel="first_name"
               filter
               valueTemplate={selectedOptionTemplate} itemTemplate={userOptionTemplate}
               className="w-full md:w-14rem border-2" />
+            <Dropdown
+              placeholder="Select a role"
+              value={selectedRole} onChange={(e) => setSelectedRole(e.value)}
+              options={roles}
+              filter
+              className="w-full md:w-14rem border-2" />
             <button
+              disabled={!selectedUser || !selectedRole}
+              onClick={handleAddUserClick}
               className={
-                "grow-0 mt-2 ml-auto rounded-xl p-2 px-8 font-bold flex justify-start " + (selectedUser ? "text-[#fff] bg-[#5A8ED1]" : "bg-[#F2F2F2] text-[#5A8ED1]")
+                "grow-0 mt-2 ml-auto rounded-xl p-2 px-8 font-bold flex justify-start " + (selectedUser && selectedRole ? "text-[#fff] bg-[#5A8ED1]" : "bg-[#F2F2F2] text-[#5A8ED1]")
               }
             >
               Add

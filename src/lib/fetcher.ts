@@ -44,12 +44,21 @@ const Fetcher = (baseUrl: string): Fetcher => {
 
     }
 
+    const contentType = response.headers.get("content-type");
 
     if (!response.ok) {
-      const errorBody = await response.json();
-      throw new FetchingError(response.status, `Failed to ${method.toLowerCase()}`, errorBody);
+      if (contentType && contentType.includes("application/json")) {
+        const errorBody = await response.json();
+        throw new FetchingError(response.status, `Failed to ${method.toLowerCase()}`, errorBody);
+      } else {
+        throw new FetchingError(response.status, "There was an error fetching", {});
+      }
     }
-    return await response.json();
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
+    } else {
+      return null;
+    }
   };
 
   const get = async (resource: string, options?: RequestInit): Promise<any> => {
