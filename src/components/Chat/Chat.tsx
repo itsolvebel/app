@@ -49,6 +49,7 @@ export default function Chat({
   const [messages, setMessages] = useState<TicketMsgHelperType[]>([])
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [me, setMe] = useState<User>()
+  const [socket, setSocket] = useState<WebSocket | null>(null)
   useEffect(() => {
 
     if (activeTicket === null) return
@@ -78,7 +79,6 @@ export default function Chat({
   function sendMessage(content: string) {
     if (!ticket) return
     if (!me) return
-
 
     const randomId = generateRandomId()
     const newTicketMessage: TicketMsgHelperType = {
@@ -143,7 +143,22 @@ export default function Chat({
   }
 
   useEffect(() => {
+    if (!activeTicket || !socket) return
+
+    socket.send(
+      JSON.stringify({
+          channel: activeTicket.id,
+        },
+      ))
+
+  }, [activeTicket, socket])
+
+  useEffect(() => {
     const socket = new WebSocket(config.WEBSOCKET_URL)
+
+    socket.onopen = () => {
+      setSocket(socket)
+    }
 
     socket.onmessage = (e) => {
 
@@ -186,10 +201,11 @@ export default function Chat({
         },
       ])
     }
+
     return () => {
       socket.close()
     }
-  }, [activeTicket])
+  }, [])
 
   if (activeTicket === null)
     return (
