@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import ChatHeader from "./ChatHeader";
-import ChatBody from "./ChatBody";
-import ChatTextArea from "./ChatTextArea";
+import { useEffect, useState } from 'react'
 
-import Image from "next/image";
-import { Ticket, TicketStatus } from "@/typings/ticket";
-import { TicketMessage } from "@/typings/messages";
-import { User } from "@/typings/user";
-import { getMe } from "@/lib/auth";
-import { config } from "@/config";
-import { fetcher } from "@/lib/fetcher";
+import Image from 'next/image'
+import { Ticket } from '@/typings/ticket'
+import { TicketMessage } from '@/typings/messages'
+import { User } from '@/typings/user'
+import { getMe } from '@/lib/auth'
+import { config } from '@/config'
+import { fetcher } from '@/lib/fetcher'
+import ChatHeader from '@components/Chat/ChatHeader'
+import ChatBody from '@components/Chat/ChatBody'
+import ChatTextArea from '@components/Chat/ChatTextArea'
 
 type ChatProps = {
   activeTicket: Ticket | null;
@@ -32,55 +32,55 @@ function toTicketMessageHelper(ticketMessage: TicketMessage, status = TicketMsgS
   return {
     ticket: ticketMessage,
     status: status,
-  };
+  }
 }
 
 const generateRandomId = () => {
-  const time = Math.floor(Date.now()).toString();
-  const randomInt = Math.floor(Math.random() * 100);
-  return time + randomInt.toString();
-};
+  const time = Math.floor(Date.now()).toString()
+  const randomInt = Math.floor(Math.random() * 100)
+  return time + randomInt.toString()
+}
 export default function Chat({
                                activeTicket,
                                openTicketDetails,
                                setOpenTicketDetails,
                              }: ChatProps) {
-  const [ticket, setTicket] = useState<Ticket>();
-  const [messages, setMessages] = useState<TicketMsgHelperType[]>([]);
-  const [loadingMessages, setLoadingMessages] = useState(true);
-  const [me, setMe] = useState<User>();
+  const [ticket, setTicket] = useState<Ticket>()
+  const [messages, setMessages] = useState<TicketMsgHelperType[]>([])
+  const [loadingMessages, setLoadingMessages] = useState(true)
+  const [me, setMe] = useState<User>()
   useEffect(() => {
 
-    if (activeTicket === null) return;
+    if (activeTicket === null) return
 
     const getUser = async () => {
-      const user = await getMe();
-      setMe(user);
-    };
+      const user = await getMe()
+      setMe(user)
+    }
     const getChatRoom = async (ticketId: string) => {
-      const data = await fetcher.get(`/tickets/${ticketId}`);
-      setTicket(data.data);
-    };
-    if (activeTicket) getChatRoom(activeTicket.id);
-    getUser();
-  }, [activeTicket]);
+      const data = await fetcher.get(`/tickets/${ticketId}`)
+      setTicket(data.data)
+    }
+    if (activeTicket) getChatRoom(activeTicket.id)
+    getUser()
+  }, [activeTicket])
 
 
   useEffect(() => {
     const getMessages = async (id: string) => {
-      const data = await fetcher.get(`tickets/${id}/messages`);
-      setMessages(data.data.map((msg: TicketMessage) => toTicketMessageHelper(msg)));
-      setLoadingMessages(false);
-    };
-    if (activeTicket !== null) getMessages(activeTicket.id);
-  }, [activeTicket]);
+      const data = await fetcher.get(`tickets/${id}/messages`)
+      setMessages(data.data.map((msg: TicketMessage) => toTicketMessageHelper(msg)))
+      setLoadingMessages(false)
+    }
+    if (activeTicket !== null) getMessages(activeTicket.id)
+  }, [activeTicket])
 
   function sendMessage(content: string) {
-    if (!ticket) return;
-    if (!me) return;
+    if (!ticket) return
+    if (!me) return
 
 
-    const randomId = generateRandomId();
+    const randomId = generateRandomId()
     const newTicketMessage: TicketMsgHelperType = {
       ticket: {
         id: randomId,
@@ -91,13 +91,13 @@ export default function Chat({
         updated_at: new Date(),
       },
       status: TicketMsgStatus.LOADING,
-    };
+    }
     setMessages((messages) => {
-      return [...messages, newTicketMessage];
-    });
+      return [...messages, newTicketMessage]
+    })
 
     const cancelMessage = () => {
-      if (!me) return;
+      if (!me) return
 
       // const newMessages = [...messages]; TODO
       // newMessages[newMessages.length] = {
@@ -110,20 +110,20 @@ export default function Chat({
       // };
 
       // setMessages(newMessages);
-    };
+    }
 
     try {
       if (activeTicket) {
         fetcher.post(`tickets/${activeTicket.id}/messages`, { content }).then((res) => {
           setMessages((messages) => {
             const index = messages.findIndex((message) => {
-              return message.ticket.id === randomId;
-            });
+              return message.ticket.id === randomId
+            })
             if (index === -1) {
-              return messages;
+              return messages
             }
-            return messages.filter((_, idx) => idx !== index);
-          });
+            return messages.filter((_, idx) => idx !== index)
+          })
         }).catch(err => {
           setMessages((messages) => {
             return messages.map((message) =>
@@ -131,23 +131,23 @@ export default function Chat({
                 ...message,
                 status: TicketMsgStatus.ERROR,
               } : message,
-            );
-          });
-        });
+            )
+          })
+        })
       }
 
 
     } catch (e) {
-      cancelMessage();
+      cancelMessage()
     }
   }
 
   useEffect(() => {
-    const socket = new WebSocket(config.WEBSOCKET_URL);
+    const socket = new WebSocket(config.WEBSOCKET_URL)
 
     socket.onmessage = (e) => {
 
-      const data = JSON.parse(e.data);
+      const data = JSON.parse(e.data)
       // if (me && data.user.id === me.id) {
       //   const newMessages = [...messages];
       //   const newTicketMessage = {
@@ -172,10 +172,10 @@ export default function Chat({
         id: data.id,
         content: data.content,
         user: data.user,
-        ticket_id: ticket?.id || "",
+        ticket_id: ticket?.id || '',
         created_at: new Date(),
         updated_at: new Date(),
-      };
+      }
 
       setMessages((messages) => [
         ...messages,
@@ -184,47 +184,47 @@ export default function Chat({
           ticket: newTicketMessage,
           status: TicketMsgStatus.OK,
         },
-      ]);
-    };
+      ])
+    }
     return () => {
-      socket.close();
-    };
-  }, [activeTicket]);
+      socket.close()
+    }
+  }, [activeTicket])
 
   if (activeTicket === null)
     return (
-      <div className="flex h-screen w-full flex-col">
-        <div className="flex h-full w-full flex-col items-center justify-center gap-12 bg-[#E7F1FF]">
+      <div className='flex h-screen w-full flex-col'>
+        <div className='flex h-full w-full flex-col items-center justify-center gap-12 bg-[#E7F1FF]'>
           <Image
-            src="/assets/notxtGray.png"
+            src='/assets/notxtGray.png'
             width={200}
             height={200}
-            className="opacity-5"
-            alt="logo"
+            className='opacity-5'
+            alt='logo'
           />
-          <h1 className="text-2xl font-bold text-gray-700">
+          <h1 className='text-2xl font-bold text-gray-700'>
             Select a ticket to start chatting
           </h1>
         </div>
       </div>
-    );
+    )
 
   return (
     <>
-      <div className="flex h-screen w-full flex-col rounded-3xl bg-[#E7F1FF]">
+      <div className='flex h-screen w-full flex-col rounded-3xl bg-[#E7F1FF]'>
         <ChatHeader
-          title={ticket?.title || ""}
-          status={ticket?.status || TicketStatus.Closed}
+          title={ticket?.title || ''}
+          status={ticket?.status || 'Closed'}
           openTicketDetails={openTicketDetails}
           setOpenTicketDetails={setOpenTicketDetails}
         />
         <ChatBody
           messageHelpers={messages}
           loadingMessages={loadingMessages}
-          userId={me?.id || ""}
+          userId={me?.id || ''}
         />
         <ChatTextArea sendMessage={sendMessage} />
       </div>
     </>
-  );
+  )
 }

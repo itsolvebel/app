@@ -1,10 +1,10 @@
-import { config } from "@/config";
-import { fetcher } from "@/lib/fetcher";
-import { User, UserRole } from "@/typings/user";
-import { jwtDecode } from "jwt-decode";
-import dayjs from "dayjs";
-import { FetchingError } from "@/lib/errors";
-import Cookies from "js-cookie";
+import { config } from '@/config'
+import { fetcher } from '@/lib/fetcher'
+import { User, UserRole } from '@/typings/user'
+import { jwtDecode } from 'jwt-decode'
+import dayjs from 'dayjs'
+import { FetchingError } from '@/lib/errors'
+import Cookies from 'js-cookie'
 
 export async function verifyJwtToken(token: string) {
   // const secret = process.env.TOKEN_SECRET
@@ -21,32 +21,32 @@ export async function verifyJwtToken(token: string) {
   // } catch (error) {
   //   throw new Error('Your token is expired')
   // }
-  const user = jwtDecode(token);
-  const isExpired = dayjs.unix(user.exp ?? 0).diff(dayjs()) < 1;
-  return !isExpired;
+  const user = jwtDecode(token)
+  const isExpired = dayjs.unix(user.exp ?? 0).diff(dayjs()) < 1
+  return !isExpired
 }
 
 export async function refreshAccessToken() {
   const options: RequestInit = {
-    credentials: "include",
+    credentials: 'include',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-  };
+  }
   try {
-    return await fetch(`${config.BACKEND_URL}/auth/refresh`, options);
+    return await fetch(`${config.BACKEND_URL}/auth/refresh`, options)
   } catch (e) {
-    throw new Error("There was an issue with refreshing the token");
+    throw new Error('There was an issue with refreshing the token')
   }
 }
 
 export async function logout() {
   try {
-    Cookies.remove("token"); //TODO remove this when auth fixed
-    localStorage.removeItem("token");
-    await fetcher.post("/auth/logout", {});
+    Cookies.remove('token') //TODO remove this when auth fixed
+    localStorage.removeItem('token')
+    await fetcher.post('/auth/logout', {})
   } catch (e) {
-    throw new Error("There was an issue with logging out");
+    throw new Error('There was an issue with logging out')
   }
 }
 
@@ -58,23 +58,23 @@ export type LoginBody = {
 
 export async function login(body: LoginBody) {
   const options: RequestInit = {
-    credentials: "include",
+    credentials: 'include',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-  };
-  return await fetcher.post("auth/login", body, options);
+  }
+  return await fetcher.post('auth/login', body, options)
 }
 
 
-let cachedUser: User | null = null;
+let cachedUser: User | null = null
 
 export async function getMe(invalidate = false): Promise<User> {
   if (invalidate || !cachedUser) {
-    const fetchedUser = await fetcher.get("/auth/me");
-    cachedUser = fetchedUser.data as User;
+    const fetchedUser = await fetcher.get('/auth/me')
+    cachedUser = fetchedUser.data as User
   }
-  return cachedUser;
+  return cachedUser
 }
 
 export type GetUserRolesData = {
@@ -88,19 +88,19 @@ export type GetUserRolesData = {
 
 export async function getUserRoles(invalidate = false): Promise<GetUserRolesData> {
   try {
-    const data = cachedUser || await getMe();
+    const data = cachedUser || await getMe()
 
-    const roles: UserRole[] = data.roles || [];
+    const roles: UserRole[] = data.roles || []
 
     return {
       roles,
-      isAdmin: roles.includes(UserRole.Admin),
-      isFreelancer: roles.includes(UserRole.Freelancer),
-      isUser: roles.includes(UserRole.User),
-      isTm: roles.includes(UserRole.Tm),
-      isSalesRep: roles.includes(UserRole.SalesRep),
-    };
+      isAdmin: roles.includes('Admin'),
+      isFreelancer: roles.includes('Freelancer'),
+      isUser: roles.includes('User'),
+      isTm: roles.includes('Tm'),
+      isSalesRep: roles.includes('SalesRep'),
+    }
   } catch (e) {
-    throw e as FetchingError;
+    throw e as FetchingError
   }
 }

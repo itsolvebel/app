@@ -1,9 +1,17 @@
 import { MoreHorizontal } from 'lucide-react'
 import Image from 'next/image'
-import { Ticket, TicketStatus, ticketStatusColors } from '@/typings/ticket'
+import { Ticket, TicketStatus } from '@/typings/ticket'
 import { formatDateTime } from '@/utils/date_utils'
 
 export default function TicketsTableItem({ ticket }: { ticket: Ticket }) {
+
+  const statusColors: Record<TicketStatus, string> = {
+    Closed: 'text-red-400 bg-red-400/30',
+    Completed: 'text-green-400 bg-green-400/30',
+    InProgress: 'text-yellow-400 bg-yellow-400/30',
+    Open: 'text-blue-400 bg-blue-400/30',
+  }
+
   return (
     <tr>
       <th
@@ -17,29 +25,29 @@ export default function TicketsTableItem({ ticket }: { ticket: Ticket }) {
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700'>
         <span
-          className={`rounded-xl py-1 px-3 bg-${ticketStatusColors[ticket.status]}-500/20 text-${ticketStatusColors[ticket.status]}-700`}
+          className={`${statusColors[ticket.status]} rounded-xl py-1 px-3`}
         >
           {ticket.status}
         </span>
       </th>
       <th
         className='whitespace-nowrap border-t-0 border-l-0 border-r-0 p-4 px-8 text-left align-middle text-xs text-gray-700 '>
-        {ticket.status != TicketStatus.Open ? (
+        {ticket.status != 'Open' ? (
           <div className='flex items-center'>
             {ticket.user.avatar_url !== null ? (
-              <div className="">
+              <div className=''>
                 <Image
                   src={ticket.user.avatar_url}
-                  alt="Avatar"
+                  alt='Avatar'
                   width={30}
                   height={30}
-                  className="rounded-full"
+                  className='rounded-full'
                 />
               </div>
             ) : (
               <div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E7F1FF]">
-                  <p className="text-xs font-bold text-[#ABABAD]">
+                <div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#E7F1FF]'>
+                  <p className='text-xs font-bold text-[#ABABAD]'>
                     {ticket.user.first_name.charAt(0).toUpperCase() +
                       ticket.user.last_name.charAt(0).toUpperCase()}
                   </p>

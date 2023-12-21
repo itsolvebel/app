@@ -1,4 +1,4 @@
-import { Category } from "@/typings/category";
+import { Category } from '@/typings/category'
 
 export type User = {
   id: string
@@ -12,15 +12,5 @@ export type User = {
   categories: Category[]
 }
 
-export enum UserRole {
-  Admin = "Admin",
-  Freelancer = "Freelancer",
-  User = "User",
-  Tm = "Tm",
-  SalesRep = "SalesRep",
-}
-
-
-export function getAllUserRoles(): UserRole[] {
-  return Object.keys(UserRole).map(key => (key) as UserRole);
-}
+export const userRoles = ['Admin', 'Freelancer', 'User', 'Tm', 'SalesRep'] as const
+export type UserRole = typeof userRoles[number]

@@ -2,7 +2,6 @@ import { Toaster } from 'react-hot-toast'
 
 import SideWelcome from './SideWelcome'
 import RegisterForm from './RegisterForm'
-import { useRouter } from 'next/navigation'
 
 export default function RegisterPage() {
   return (

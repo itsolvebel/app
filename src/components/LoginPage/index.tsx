@@ -5,10 +5,10 @@ import LoginForm from './LoginForm'
 
 export default function LoginPage() {
   return (
-    <div className="flex h-screen w-screen bg-[#0D1623] p-4">
+    <div className='flex h-screen w-screen bg-[#0D1623] p-4'>
       <Toaster />
       <LoginForm />
       <SideWelcome />
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { User, UserRole } from "@/typings/user";
-import { Category } from "@/typings/category";
+import { User, UserRole } from '@/typings/user'
+import { Category } from '@/typings/category'
 
 export type Ticket = {
   id: string
@@ -28,16 +28,6 @@ export type TicketUser = {
   role: UserRole
 }
 
-export enum TicketStatus {
-  Closed = "Closed",
-  Completed = "Completed",
-  InProgress = "InProgress",
-  Open = "Open",
-}
 
-export const ticketStatusColors = {
-  [TicketStatus.Closed]: "red",
-  [TicketStatus.Completed]: "green",
-  [TicketStatus.InProgress]: "blue",
-  [TicketStatus.Open]: "yellow"
-}
+export const ticketStatuses = ['Closed', 'Completed', 'InProgress', 'Open'] as const
+export type TicketStatus = typeof ticketStatuses[number]

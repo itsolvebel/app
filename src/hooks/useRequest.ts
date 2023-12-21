@@ -1,7 +1,4 @@
-"use client"
-import axios, { AxiosError } from 'axios'
-import { useCallback, useState } from 'react'
-import { config } from '@/config'
+'use client'
 
 // axios.defaults.headers.common.Accept = 'application/json'
 // axios.defaults.headers.common['Content-Type'] = 'application/json'

@@ -1,5 +1,3 @@
-import * as util from 'util'
-
 class FetchingError extends Error {
   statusCode: number
   body: any

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { refreshAccessToken, verifyJwtToken } from "@/lib/auth";
+import { NextRequest, NextResponse } from 'next/server'
+import { verifyJwtToken } from '@/lib/auth'
 
-const PUBLIC_ROUTES = ["/login", "/register"];
+const PUBLIC_ROUTES = ['/login', '/register']
 
 // export async function middleware(req: NextRequest) { //TODO IMPLEMENT COOKIES AGAIN
 //
@@ -36,18 +36,18 @@ const PUBLIC_ROUTES = ["/login", "/register"];
 export async function middleware(req: NextRequest) {
 
   if (PUBLIC_ROUTES.some(route => req.nextUrl.pathname.startsWith(route))) {
-    return null;
+    return null
   }
-  const accessToken = req.cookies.get("token")?.value;
+  const accessToken = req.cookies.get('token')?.value
   const verifiedAccessToken = accessToken && await verifyJwtToken(accessToken).catch((err) => {
-    console.error(err);
-    return;
-  });
+    console.error(err)
+    return
+  })
 
 
   if (!verifiedAccessToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL('/login', req.url))
   }
 }
 
-export const config = { matcher: "/((?!.*\\.).*)" };
+export const config = { matcher: '/((?!.*\\.).*)' }

@@ -8,7 +8,7 @@ import { FetchingError } from '@/lib/errors'
 import Loading from '@components/Loading'
 import Sidebar from '@components/dashboard/Sidebar'
 import Chart from '@components/dashboard/Chart'
-import { Ticket, TicketStatus } from '@/typings/ticket'
+import { Ticket } from '@/typings/ticket'
 import { fetcher } from '@/lib/fetcher'
 
 
@@ -37,16 +37,16 @@ export default function Dashboard() {
     {
       title: 'Total tickets',
       value: tickets.length,
-      color: "#276eff",
+      color: '#276eff',
       icon: TicketIcon,
     },
     {
       title: 'Completed tickets',
-      value: tickets.filter((ticket) => ticket.status === TicketStatus.Completed).length,
-      color: "#01c156",      icon: ShieldCheck,
+      value: tickets.filter((ticket) => ticket.status === 'Completed').length,
+      color: '#01c156', icon: ShieldCheck,
     },
     {
-      title: 'Total users',
+      title: 'Total Users',
       value: 2,
       color: '#ffd727',
       icon: Users,
