@@ -7,6 +7,6 @@ export const config = {
   //   ? "https://itsolve-prod.1.ie-1.fl0.io/api/v1"
   //   : "https://itsolve-prod.1.ie-1.fl0.io/api/v1",
   WEBSOCKET_URL: 'wss://itsolve-prod.1.ie-1.fl0.io/ws',
-  // BACKEND_URL: "https://itsolve-prod.1.ie-1.fl0.io/api/v1",
-  BACKEND_URL: 'http://localhost:3001/api/v1',
+  BACKEND_URL: "https://itsolve-prod.1.ie-1.fl0.io/api/v1",
+  // BACKEND_URL: 'http://localhost:3001/api/v1',
 }
