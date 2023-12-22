@@ -56,6 +56,14 @@ export type LoginBody = {
   password: string
 }
 
+export type RegisterBody = {
+  username: string
+  first_name: string
+  last_name: string
+  email: string
+  password: string
+}
+
 export async function login(body: LoginBody) {
   const options: RequestInit = {
     credentials: 'include',
@@ -64,6 +72,17 @@ export async function login(body: LoginBody) {
     },
   }
   return await fetcher.post('auth/login', body, options)
+}
+
+export async function register(body: RegisterBody) {
+  console.log(body)
+  const options: RequestInit = {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+  return await fetcher.post('auth/signup', body, options)
 }
 
 

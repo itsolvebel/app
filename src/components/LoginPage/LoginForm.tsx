@@ -37,7 +37,6 @@ export function LoginForm() {
         return
       }
       toast.error('Something went wrong!')
-      console.error(error)
     })
   }
 

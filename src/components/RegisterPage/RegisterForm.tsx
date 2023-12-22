@@ -2,6 +2,8 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { login, register } from '@/lib/auth'
+import { useRouter } from 'next/navigation'
 import { fetcher } from '@/lib/fetcher'
 
 type Form = {
@@ -37,19 +39,17 @@ export function RegisterForm() {
     email: '',
     password: '',
   })
+  const router = useRouter()
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
     setForm((prev) => ({ ...prev, [id]: value }))
-
-    // Remove error message when user starts typing
     setFieldErrors((prev) => ({ ...prev, [id]: '' }))
   }
 
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter')
       handleOnSubmit()
-    }
   }
 
   const handleOnSubmit = () => {
@@ -60,34 +60,34 @@ export function RegisterForm() {
       email: '',
       password: '',
     }
+    let changed = false
 
     Object.entries(form).forEach(([id, value]) => {
       if (!value) {
         newFieldErrors[id as keyof FieldErrors] = 'This field is required'
+        changed = true
       }
     })
 
-    if (Object.keys(newFieldErrors).length > 0) {
+    if (changed) {
       setFieldErrors(newFieldErrors)
       return
     }
 
-    fetcher.post('auth/signup', form).then((res) => {
-      if (res.status > 400 && res.status < 500) {
-        res.json().then((data: any) => {
-          toast.error(data.message)
+    register(form).then((res) => {
+      const success = res.message === 'Signup successfully'
+      if (success) {
+        login(
+          {
+            email_or_username: form.email,
+            password: form.password,
+          },
+        ).then((loginResult) => {
+          fetcher.setToken(loginResult.access_token)
+          router.replace('/')
         })
-      }
-
-      if (res.status === 500) {
-        toast.error('Something went wrong')
-      }
-
-      if (res.status === 200) {
-        res.json().then((data: any) => {
-          window.location.href = '/'
-          localStorage.setItem('token', data.data.token)
-        })
+      } else {
+        toast.error(res.message)
       }
     })
   }
