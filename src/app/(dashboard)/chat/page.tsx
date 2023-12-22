@@ -17,10 +17,17 @@ import { TicketUser } from '@/typings/ticket'
 
 
 export default function ChatPage() {
-  const [activeChatRoom, setActiveChatRoom] = useState<ChatRoom | null>(null)
+  const [activeChatRoom, setRoom] = useState<ChatRoom | null>(null)
   const [openChatRoomDetails, setOpenChatRoomDetails] = useState(false)
   const searchParams = useSearchParams()
   const newTicket = searchParams.get('new')
+
+  function setActiveChatRoom(chatRoom: ChatRoom) {
+    fetcher.get(`chat_rooms/${chatRoom.id}`)
+      .then((res: Result<ChatRoom>) => {
+        setRoom(res.data)
+      })
+  }
 
   async function sendMessage(content: string): Promise<Result<Message>> {
     if (!activeChatRoom) return Promise.reject('No active chat')
