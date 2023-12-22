@@ -160,6 +160,7 @@ export default function TicketPage() {
           loadMessages={loadMessages}
           openDetails={openTicketDetails}
           setOpenDetails={setOpenTicketDetails}
+          chatType={'Ticket'}
         />
         <ChatDetails
           activeChat={activeTicket}

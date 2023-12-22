@@ -19,6 +19,7 @@ type ChatProps = {
   openDetails: boolean;
   activeChat: Ticket | ChatRoom | null;
   setOpenDetails: (openDetails: boolean) => void;
+  chatType: 'Ticket' | 'ChatRoom';
 }
 
 export function Chat(
@@ -28,6 +29,7 @@ export function Chat(
     setOpenDetails,
     sendMessage,
     loadMessages,
+    chatType,
   }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [loadingMessages, setLoadingMessages] = useState(true)
@@ -93,8 +95,7 @@ export function Chat(
   }
 
   function isTicket(): boolean {
-    if (!activeChat) return false
-    return 'title' in activeChat
+    return chatType === 'Ticket'
   }
 
   function getTitle(): string {

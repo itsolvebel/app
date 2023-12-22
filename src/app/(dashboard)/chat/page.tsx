@@ -147,6 +147,7 @@ export default function ChatPage() {
           loadMessages={loadMessages}
           openDetails={openChatRoomDetails}
           setOpenDetails={setOpenChatRoomDetails}
+          chatType={'ChatRoom'}
         />
         <ChatDetails
           activeChat={activeChatRoom}
