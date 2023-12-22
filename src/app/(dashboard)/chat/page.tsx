@@ -18,7 +18,7 @@ import { TicketUser } from '@/typings/ticket'
 
 export default function ChatPage() {
   const [activeChatRoom, setRoom] = useState<ChatRoom | null>(null)
-  const [openChatRoomDetails, setOpenChatRoomDetails] = useState(false)
+  const [openChatRoomDetails, setDetails] = useState(localStorage.getItem('chatDetails') === 'true')
   const searchParams = useSearchParams()
   const newTicket = searchParams.get('new')
 
@@ -27,6 +27,11 @@ export default function ChatPage() {
       .then((res: Result<ChatRoom>) => {
         setRoom(res.data)
       })
+  }
+
+  function setOpenChatRoomDetails(open: boolean) {
+    localStorage.setItem('chatDetails', open.toString())
+    setDetails(open)
   }
 
   async function sendMessage(content: string): Promise<Result<Message>> {

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { Ticket, TicketUser } from '@/typings/ticket'
 import { useSearchParams } from 'next/navigation'
 import { Result } from '@/typings/result'
@@ -16,7 +16,7 @@ import { User, UserRole } from '@/typings/user'
 
 export default function TicketPage() {
   const [activeTicket, setTicket] = useState<Ticket | null>(null)
-  const [openTicketDetails, setOpenTicketDetails] = useState(false)
+  const [openTicketDetails, setDetails] = useState(localStorage.getItem('chatDetails') === 'true')
   const searchParams = useSearchParams()
   const newTicket = searchParams.get('new')
 
@@ -26,6 +26,11 @@ export default function TicketPage() {
           setTicket(res.data)
         },
       )
+  }
+
+  function setOpenTicketDetails(open: boolean) {
+    localStorage.setItem('chatDetails', open.toString())
+    setDetails(open)
   }
 
   async function sendMessage(content: string): Promise<Result<Message>> {
