@@ -8,7 +8,7 @@ type Props = {
   Icon: LucideIcon
 }
 
-export default function Chart({ title, value, color, Icon }: Props) {
+export function Chart({ title, value, color, Icon }: Props) {
   return (
     <div
       className='flex w-80 gap-4 overflow-hidden rounded-lg p-4 shadow-md hover:shadow-lg hover:scale-105 transition duration-300 ease-in-out'>

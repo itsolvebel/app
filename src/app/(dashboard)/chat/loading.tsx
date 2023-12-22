@@ -1,5 +1,5 @@
-import DefaultLoadingComponent from '@/components/Loading'
+import { DefaultLoading } from '@components/DefaultLoading'
 
 export default function Loading() {
-  return <DefaultLoadingComponent />
+  return <DefaultLoading />
 }

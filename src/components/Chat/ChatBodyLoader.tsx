@@ -1,4 +1,4 @@
-export default function ChatBodyLoader() {
+export function ChatBodyLoader() {
   return (
     <div className='flex h-full w-full items-end overflow-hidden'>
       <div className='flex h-full w-full flex-col gap-4 px-12 py-10'>

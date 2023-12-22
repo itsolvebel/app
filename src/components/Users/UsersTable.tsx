@@ -15,7 +15,7 @@ type UserMap = {
   [key: string]: User
 }
 
-export default function UserTable({ users, fetchUsers }: Props) {
+export function UserTable({ users, fetchUsers }: Props) {
   const [userMap, setUserMap] = useState<UserMap>({})
   const [hasChanged, setHasChanged] = useState(false)
   const [updatedUsers, setUpdatedUsers] = useState<UserMap>({})

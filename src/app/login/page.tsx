@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import LoginPage from '@components/LoginPage'
+import { LoginPage } from '@components/LoginPage'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL || `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`),

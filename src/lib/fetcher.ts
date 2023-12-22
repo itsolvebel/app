@@ -4,9 +4,10 @@ import { refreshAccessToken } from '@/lib/auth'
 import Cookies from 'js-cookie'
 
 type Fetcher = {
-  get(resource: string, options?: RequestInit): Promise<any>;
-  post(resource: string, body: any, options?: RequestInit): Promise<any>;
-  put(resource: string, body: any, options?: RequestInit): Promise<any>;
+  get<T = any>(resource: string, options?: RequestInit): Promise<T>;
+  post<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
+  put<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
+  delete<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
   setToken(token: string): void;
 }
 
@@ -17,7 +18,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
     localStorage.setItem('token', t)
     Cookies.set('token', token, { expires: 9999999, sameSite: 'None', secure: true })
   }
-  const makeRequest = async (method: string, resource: string, options?: RequestInit, body?: any): Promise<any> => {
+  const makeRequest = async <T = any>(method: string, resource: string, options?: RequestInit, body?: any): Promise<T> => {
     resource = filterResourceString(resource)
     const requestOptions: RequestInit = {
       credentials: 'include',
@@ -55,11 +56,11 @@ const Fetcher = (baseUrl: string): Fetcher => {
     if (contentType && contentType.includes('application/json')) {
       return await response.json()
     } else {
-      return response
+      return response as any
     }
   }
 
-  const get = async (resource: string, options?: RequestInit): Promise<any> => {
+  const get = async <T>(resource: string, options?: RequestInit): Promise<T> => {
     return makeRequest('GET', resource, options)
   }
 
@@ -70,7 +71,11 @@ const Fetcher = (baseUrl: string): Fetcher => {
     return makeRequest('PUT', resource, options, body)
   }
 
-  return { get, post, put, setToken }
+  const deleteRequest = async (resource: string, options?: RequestInit): Promise<any> => {
+    return makeRequest('DELETE', resource, options)
+  }
+
+  return { get, post, put, delete: deleteRequest, setToken }
 }
 
 const filterResourceString = (resource: string) => {

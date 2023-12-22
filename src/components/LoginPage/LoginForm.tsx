@@ -13,7 +13,7 @@ type LoginForm = {
   password: string;
 }
 
-export default function LoginForm() {
+export function LoginForm() {
   const router = useRouter()
   const [form, setForm] = useState<LoginForm>(
     { email_or_username: '', password: '' },

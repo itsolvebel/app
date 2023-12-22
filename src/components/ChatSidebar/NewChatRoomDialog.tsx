@@ -11,7 +11,7 @@ type NewChatRoomDialogProps = {
 }
 
 
-export default function NewChatRoomDialog({ children, updateChats, title }: NewChatRoomDialogProps) {
+export function NewChatRoomDialog({ children, updateChats, title }: NewChatRoomDialogProps) {
   const [inputs, setInputs] = useState<NewChatRoom>({
     name: '',
     description: '',

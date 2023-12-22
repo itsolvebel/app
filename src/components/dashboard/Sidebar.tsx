@@ -15,7 +15,7 @@ type SidebarItem = {
   whoAccess: UserRole[]
 }
 
-export default function Sidebar() {
+export function Sidebar() {
   const [hovered, setHovered] = useState(false)
   const route = usePathname()
   const [isLoading, setIsLoading] = useState(true)

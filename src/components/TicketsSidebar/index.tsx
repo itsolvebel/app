@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
-import NewTicketDialog from './NewTicketDialog'
-import TicketLoading from './TicketLoading'
-import { Ticket as TTicket } from '@/typings/ticket'
-import Ticket from './Ticket'
+import { Ticket } from '@/typings/ticket'
 import { fetcher } from '@/lib/fetcher'
+import { TicketLoading } from '@components/TicketsSidebar/TicketLoading'
+import { Ticket as TicketComponent } from '@components/TicketsSidebar/Ticket'
+import { NewTicketDialog } from '@components/TicketsSidebar/NewTicketDialog'
 
 type ChatSidebarProps = {
-  activeTicket: TTicket | null,
-  setActiveTicket: (ticket: TTicket) => void,
+  activeTicket: Ticket | null,
+  setActiveTicket: (ticket: Ticket) => void,
   newTicketTitle: string | null
 }
 
-export default function TicketSidebar({ activeTicket, setActiveTicket, newTicketTitle }: ChatSidebarProps) {
-  const [tickets, setTickets] = useState<TTicket[]>([])
+export function TicketSidebar({ activeTicket, setActiveTicket, newTicketTitle }: ChatSidebarProps) {
+  const [tickets, setTickets] = useState<Ticket[]>([])
   const [loadingTickets, setLoadingTickets] = useState(true)
   useEffect(() => {
     const getTickets = async () => {
@@ -56,17 +56,15 @@ export default function TicketSidebar({ activeTicket, setActiveTicket, newTicket
               ? 'Active Tickets'
               : 'You don\'t have any active tickets'}
           </span>
-          {tickets.map((ticket) => {
-            if (ticket.status === 'Open') {
-              return (
-                <Ticket
-                  key={ticket.id}
-                  ticket={ticket}
-                  activeTicket={activeTicket}
-                  setActiveTicket={setActiveTicket}
-                />
-              )
-            }
+          {tickets.filter(ticket => ticket.status === 'Open').map((ticket) => {
+            return (
+              <TicketComponent
+                key={ticket.id}
+                ticket={ticket}
+                activeTicket={activeTicket}
+                setActiveTicket={setActiveTicket}
+              />
+            )
           })}
         </div>
       </div>

@@ -1,23 +1,12 @@
 import { Ticket } from '@/typings/ticket'
 
-function formatDate(date: string) {
-  const d = new Date(date)
-  let month = `${d.getMonth() + 1}`
-  let day = `${d.getDate()}`
-  const year = `${d.getFullYear()}`
-
-  if (month.length < 2) month = `0${month}`
-  if (day.length < 2) day = `0${day}`
-
-  return [month, day, year].join('/')
-}
-
 type TicketProps = {
   ticket: Ticket,
   activeTicket: Ticket | null,
   setActiveTicket: (ticket: Ticket) => void
 }
-export default function Ticket({ ticket, activeTicket, setActiveTicket }: TicketProps) {
+
+export function Ticket({ ticket, activeTicket, setActiveTicket }: TicketProps) {
   return (
     <div
       className={`flex h-24 w-full cursor-pointer flex-col justify-between rounded-xl px-8 py-6 transition-all duration-300 ${

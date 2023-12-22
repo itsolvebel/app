@@ -21,7 +21,7 @@ type NewTicketDialogForm = {
   budget: number
 }
 
-export default function NewTicketDialog({ children, updateTickets, title }: NewTicketDialogProps) {
+export function NewTicketDialog({ children, updateTickets, title }: NewTicketDialogProps) {
   const [inputs, setInputs] = useState<NewTicketDialogForm>({
     title: title || '',
     description: '',

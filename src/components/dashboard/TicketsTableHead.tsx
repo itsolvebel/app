@@ -1,4 +1,4 @@
-export default function TicketsTableHead() {
+export function TicketsTableHead() {
   return (
     <thead>
     <tr>

@@ -1,9 +1,9 @@
 import { Toaster } from 'react-hot-toast'
 
-import SideWelcome from './SideWelcome'
-import RegisterForm from './RegisterForm'
+import { SideWelcome } from './SideWelcome'
+import { RegisterForm } from './RegisterForm'
 
-export default function RegisterPage() {
+export function RegisterPage() {
   return (
     <div className='flex h-screen w-screen bg-[#0D1623] p-4'>
       <Toaster />

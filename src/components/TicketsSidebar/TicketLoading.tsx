@@ -1,4 +1,4 @@
-export default function TicketLoading() {
+export function TicketLoading() {
   return (
     <div className='flex h-24 w-full cursor-pointer flex-col justify-between rounded-xl bg-[#F2F2F2] px-8 py-6'>
       <div className='w-22 h-3 animate-pulse rounded-full bg-gray-200' />

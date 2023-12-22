@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Ticket, TicketStatus } from '@/typings/ticket'
 import { formatDateTime } from '@/utils/date_utils'
 
-export default function TicketsTableItem({ ticket }: { ticket: Ticket }) {
+export function TicketsTableItem({ ticket }: { ticket: Ticket }) {
 
   const statusColors: Record<TicketStatus, string> = {
     Closed: 'text-red-400 bg-red-400/30',

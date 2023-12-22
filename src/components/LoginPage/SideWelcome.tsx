@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-export default function SideWelcome() {
+export function SideWelcome() {
   return (
     <div className='hidden h-full flex-col justify-center gap-8 rounded-2xl bg-[#FFFFFF] p-16 lg:flex lg:w-full'>
       <Image src='/assets/logoGray.png' width={100} height={100} alt='Logo' />

@@ -5,7 +5,7 @@ type ChatTextAreaProps = {
   sendMessage: (content: string) => void;
 }
 
-export default function ChatTextArea({ sendMessage }: ChatTextAreaProps) {
+export function ChatTextArea({ sendMessage }: ChatTextAreaProps) {
   const [rows, setRows] = useState(1)
   const [message, setMessage] = useState('')
 

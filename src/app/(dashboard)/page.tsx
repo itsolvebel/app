@@ -1,13 +1,13 @@
 'use client'
 import { ShieldCheck, Ticket as TicketIcon, Users } from 'lucide-react'
 import { User } from '@/typings/user'
-import TicketsCollapsible from '@components/dashboard/TicketsCollapsible'
+import { TicketsCollapsible } from '@components/dashboard/TicketsCollapsible'
 import { getMe } from '@/lib/auth'
 import { useEffect, useState } from 'react'
 import { FetchingError } from '@/lib/errors'
-import Loading from '@components/Loading'
-import Sidebar from '@components/dashboard/Sidebar'
-import Chart from '@components/dashboard/Chart'
+import { DefaultLoading } from '@components/DefaultLoading'
+import { Sidebar } from '@components/dashboard/Sidebar'
+import { Chart } from '@components/dashboard/Chart'
 import { Ticket } from '@/typings/ticket'
 import { fetcher } from '@/lib/fetcher'
 
@@ -75,7 +75,7 @@ export default function Dashboard() {
     getTickets()
     fetchData()
   }, [])
-  if (isLoading) return <Loading />
+  if (isLoading) return <DefaultLoading />
 
   return (
     <>

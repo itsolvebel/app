@@ -1,19 +1,19 @@
 'use client'
 
 import { RefObject, useEffect, useRef } from 'react'
-import ReceiverMessage from './ReceiverMessage'
-import SenderMessage from './SenderMessage'
-import ChatBodyLoader from './ChatBodyLoader'
-import { TicketMsgHelperType } from '@components/Chat/Chat'
+import { ReceiverMessage } from './ReceiverMessage'
+import { SenderMessage } from './SenderMessage'
+import { ChatBodyLoader } from './ChatBodyLoader'
+import { Message } from '@/typings/messages'
 
 type Props = {
-  messageHelpers: TicketMsgHelperType[]
+  messages: Message[]
   loadingMessages: boolean
   userId: string
 }
 
 
-export default function ChatBody({ messageHelpers, loadingMessages, userId }: Props) {
+export function ChatBody({ messages, loadingMessages, userId }: Props) {
   const scrollRef: RefObject<HTMLDivElement> = useRef(null)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function ChatBody({ messageHelpers, loadingMessages, userId }: Pr
     if (scroll) {
       scroll.scrollTop = scroll.scrollHeight
     }
-  }, [messageHelpers])
+  }, [messages])
 
   if (loadingMessages) return <ChatBodyLoader />
   return (
@@ -32,22 +32,19 @@ export default function ChatBody({ messageHelpers, loadingMessages, userId }: Pr
       >
         <div className='flex min-h-[100%] flex-col justify-end'>
           <div className='flex flex-col gap-4 px-12 py-4'>
-            {messageHelpers.map((messageHelper, i) => {
-              if (messageHelper.ticket.user.id === userId) {
+            {messages.map((message, i) => {
+              if (message.message.user.id === userId) {
                 return (
                   <SenderMessage
-                    key={messageHelper.ticket.id}
-                    user={messageHelper.ticket.user}
-                    content={messageHelper.ticket.content}
-                    messageHelper={messageHelper}
+                    key={message.message.id}
+                    message={message}
                   />
                 )
               } else {
                 return (
                   <ReceiverMessage
                     key={i}
-                    user={messageHelper.ticket.user}
-                    content={messageHelper.ticket.content}
+                    message={message}
                   />
                 )
               }

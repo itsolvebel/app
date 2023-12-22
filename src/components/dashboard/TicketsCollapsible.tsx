@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import TicketsTableHead from './TicketsTableHead'
-import TicketsTableItem from './TicketsTableItem'
+import { TicketsTableHead } from './TicketsTableHead'
+import { TicketsTableItem } from './TicketsTableItem'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Collapsible, CollapsibleTrigger, Content } from '@radix-ui/react-collapsible'
 import { Ticket } from '@/typings/ticket'
@@ -11,7 +11,7 @@ type Props = {
   tickets: Ticket[]
 }
 
-export default function TicketsCollapsible({ tickets }: Props) {
+export function TicketsCollapsible({ tickets }: Props) {
   const [open, setOpen] = useState(false)
 
   return (

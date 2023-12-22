@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import RegisterPage from '@components/RegisterPage'
+import { RegisterPage } from '@components/RegisterPage'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL || `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`),

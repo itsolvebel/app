@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import NewChatRoomDialog from './NewChatRoomDialog'
-import ChatRoomLoading from './ChatRoomLoading'
-import ChatRoom from './ChatRoom'
+import { NewChatRoomDialog } from './NewChatRoomDialog'
+import { ChatRoomLoading } from './ChatRoomLoading'
+import { ChatRoom } from './ChatRoom'
 import { fetcher } from '@/lib/fetcher'
 import { ChatRoom as ChatRoomType } from '@/typings/chat_room'
 import { getUserRoles } from '@/lib/auth'
@@ -12,7 +12,7 @@ type ChatSidebarProps = {
   newChatRoomTitle: string | null
 }
 
-export default function ChatSidebar({ activeChatRoom, setActiveChatRoom, newChatRoomTitle }: ChatSidebarProps) {
+export function ChatSidebar({ activeChatRoom, setActiveChatRoom, newChatRoomTitle }: ChatSidebarProps) {
   const [chatRooms, setChatRooms] = useState<ChatRoomType[]>([])
   const [loadingChatRooms, setLoadingChatRooms] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)

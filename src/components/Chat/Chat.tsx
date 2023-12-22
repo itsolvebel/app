@@ -1,157 +1,47 @@
 import { useEffect, useState } from 'react'
 
 import Image from 'next/image'
-import { Ticket } from '@/typings/ticket'
-import { TicketMessage } from '@/typings/messages'
+import { ChatMessage, Message, TicketMessage } from '@/typings/messages'
 import { User } from '@/typings/user'
 import { getMe } from '@/lib/auth'
 import { config } from '@/config'
-import { fetcher } from '@/lib/fetcher'
-import ChatHeader from '@components/Chat/ChatHeader'
-import ChatBody from '@components/Chat/ChatBody'
-import ChatTextArea from '@components/Chat/ChatTextArea'
+import { ChatHeader } from '@components/Chat/ChatHeader'
+import { ChatBody } from '@components/Chat/ChatBody'
+import { ChatTextArea } from '@components/Chat/ChatTextArea'
+import { toMessage } from '@/utils/message_helper'
+import { Result } from '@/typings/result'
+import { Ticket } from '@/typings/ticket'
+import { ChatRoom } from '@/typings/chat_room'
 
 type ChatProps = {
-  activeTicket: Ticket | null;
-  openTicketDetails: boolean;
-  setOpenTicketDetails: (open: boolean) => void;
+  loadMessages: (offset: number) => Promise<Result<Message[]>>;
+  sendMessage: (content: string) => Promise<Result<Message>>;
+  openDetails: boolean;
+  activeChat: Ticket | ChatRoom | null;
+  setOpenDetails: (openDetails: boolean) => void;
 }
 
-export enum TicketMsgStatus {
-  LOADING,
-  OK,
-  ERROR
-}
-
-export type TicketMsgHelperType = {
-  ticket: TicketMessage,
-  status: TicketMsgStatus
-}
-
-function toTicketMessageHelper(ticketMessage: TicketMessage, status = TicketMsgStatus.OK) {
-  return {
-    ticket: ticketMessage,
-    status: status,
-  }
-}
-
-const generateRandomId = () => {
-  const time = Math.floor(Date.now()).toString()
-  const randomInt = Math.floor(Math.random() * 100)
-  return time + randomInt.toString()
-}
-export default function Chat({
-                               activeTicket,
-                               openTicketDetails,
-                               setOpenTicketDetails,
-                             }: ChatProps) {
-  const [ticket, setTicket] = useState<Ticket>()
-  const [messages, setMessages] = useState<TicketMsgHelperType[]>([])
+export function Chat(
+  {
+    activeChat,
+    openDetails,
+    setOpenDetails,
+    sendMessage,
+    loadMessages,
+  }: ChatProps) {
+  const [messages, setMessages] = useState<Message[]>([])
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [me, setMe] = useState<User>()
   const [socket, setSocket] = useState<WebSocket | null>(null)
+  const [offset, setOffset] = useState(0)
+
   useEffect(() => {
-
-    if (activeTicket === null) return
-
     const getUser = async () => {
       const user = await getMe()
       setMe(user)
     }
-    const getChatRoom = async (ticketId: string) => {
-      const data = await fetcher.get(`/tickets/${ticketId}`)
-      setTicket(data.data)
-    }
-    if (activeTicket) getChatRoom(activeTicket.id)
     getUser()
-  }, [activeTicket])
-
-
-  useEffect(() => {
-    const getMessages = async (id: string) => {
-      const data = await fetcher.get(`tickets/${id}/messages`)
-      setMessages(data.data.map((msg: TicketMessage) => toTicketMessageHelper(msg)))
-      setLoadingMessages(false)
-    }
-    if (activeTicket !== null) getMessages(activeTicket.id)
-  }, [activeTicket])
-
-  function sendMessage(content: string) {
-    if (!ticket) return
-    if (!me) return
-
-    const randomId = generateRandomId()
-    const newTicketMessage: TicketMsgHelperType = {
-      ticket: {
-        id: randomId,
-        ticket_id: ticket.id,
-        content: content,
-        user: me,
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      status: TicketMsgStatus.LOADING,
-    }
-    setMessages((messages) => {
-      return [...messages, newTicketMessage]
-    })
-
-    const cancelMessage = () => {
-      if (!me) return
-
-      // const newMessages = [...messages]; TODO
-      // newMessages[newMessages.length] = {
-      //   id: "0",
-      //   content,
-      //   user: me,
-      //   ticket_id: ticket.id,
-      //   created_at: new Date(),
-      //   updated_at: new Date(),
-      // };
-
-      // setMessages(newMessages);
-    }
-
-    try {
-      if (activeTicket) {
-        fetcher.post(`tickets/${activeTicket.id}/messages`, { content }).then((res) => {
-          setMessages((messages) => {
-            const index = messages.findIndex((message) => {
-              return message.ticket.id === randomId
-            })
-            if (index === -1) {
-              return messages
-            }
-            return messages.filter((_, idx) => idx !== index)
-          })
-        }).catch(err => {
-          setMessages((messages) => {
-            return messages.map((message) =>
-              message.ticket.id === randomId ? {
-                ...message,
-                status: TicketMsgStatus.ERROR,
-              } : message,
-            )
-          })
-        })
-      }
-
-
-    } catch (e) {
-      cancelMessage()
-    }
-  }
-
-  useEffect(() => {
-    if (!activeTicket || !socket) return
-
-    socket.send(
-      JSON.stringify({
-          channel: activeTicket.id,
-        },
-      ))
-
-  }, [activeTicket, socket])
+  }, [])
 
   useEffect(() => {
     const socket = new WebSocket(config.WEBSOCKET_URL)
@@ -161,53 +51,59 @@ export default function Chat({
     }
 
     socket.onmessage = (e) => {
+      const message: TicketMessage | ChatMessage = JSON.parse(e.data)
 
-      const data = JSON.parse(e.data)
-      // if (me && data.user.id === me.id) {
-      //   const newMessages = [...messages];
-      //   const newTicketMessage = {
-      //     ticket: {
-      //
-      //     }
-      //   }
-      //   newMessages[newMessages.length] = {
-      //     id: data.id,
-      //     content: data.content,
-      //     user: me,
-      //     ticket_id: ticket?.id || "",
-      //     created_at: new Date(),
-      //     updated_at: new Date(),
-      //   };
-      //
-      //   setMessages(newMessages);
-      //   return;
-      // }
-
-      const newTicketMessage: TicketMessage = {
-        id: data.id,
-        content: data.content,
-        user: data.user,
-        ticket_id: ticket?.id || '',
-        created_at: new Date(),
-        updated_at: new Date(),
-      }
-
+      if (message.user.id === me?.id) return
       setMessages((messages) => [
         ...messages,
-        {
-          key: newTicketMessage.id,
-          ticket: newTicketMessage,
-          status: TicketMsgStatus.OK,
-        },
+        toMessage(message),
       ])
     }
 
     return () => {
       socket.close()
     }
-  }, [])
+  }, [me])
 
-  if (activeTicket === null)
+  useEffect(() => {
+    loadMessages(offset).then((res) => {
+      setMessages(res.data)
+      setLoadingMessages(false)
+    })
+  }, [loadMessages, offset])
+
+  useEffect(() => {
+    if (!activeChat || !socket) return
+
+    socket.send(
+      JSON.stringify({
+          channel: activeChat.id,
+        },
+      ))
+
+  }, [activeChat, socket])
+
+  function send(content: string) {
+    if (!me || !socket || !activeChat) return
+
+    sendMessage(content).then((res) => {
+      if (!res.success) return
+      setMessages((messages) => [...messages, res.data])
+    })
+  }
+
+  function isTicket(): boolean {
+    if (!activeChat) return false
+    return 'title' in activeChat
+  }
+
+  function getTitle(): string {
+    if (!activeChat) return ''
+    if (isTicket()) return (activeChat as Ticket).title
+    return (activeChat as ChatRoom).name
+  }
+
+  if (activeChat === null)
     return (
       <div className='flex h-screen w-full flex-col'>
         <div className='flex h-full w-full flex-col items-center justify-center gap-12 bg-[#E7F1FF]'>
@@ -219,7 +115,7 @@ export default function Chat({
             alt='logo'
           />
           <h1 className='text-2xl font-bold text-gray-700'>
-            Select a ticket to start chatting
+            {isTicket() ? 'Select a ticket to start chatting' : 'Select a chat to start chatting'}
           </h1>
         </div>
       </div>
@@ -229,17 +125,16 @@ export default function Chat({
     <>
       <div className='flex h-screen w-full flex-col rounded-3xl bg-[#E7F1FF]'>
         <ChatHeader
-          title={ticket?.title || ''}
-          status={ticket?.status || 'Closed'}
-          openTicketDetails={openTicketDetails}
-          setOpenTicketDetails={setOpenTicketDetails}
+          title={getTitle()}
+          openDetails={openDetails}
+          setOpenDetails={setOpenDetails}
         />
         <ChatBody
-          messageHelpers={messages}
+          messages={messages}
           loadingMessages={loadingMessages}
           userId={me?.id || ''}
         />
-        <ChatTextArea sendMessage={sendMessage} />
+        <ChatTextArea sendMessage={send} />
       </div>
     </>
   )

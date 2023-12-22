@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import Sidebar from '@components/dashboard/Sidebar'
-import UserTable from '@components/Users/UsersTable'
+import { Sidebar } from '@components/dashboard/Sidebar'
+import { UserTable } from '@components/Users/UsersTable'
 import { fetcher } from '@/lib/fetcher'
 
 
@@ -40,7 +40,7 @@ export default function UserDashboard() {
   return (
     <div className='flex h-screen'>
       <Sidebar />
-      <UserTable users={users} fetchUsers={fetchUsers}/>
+      <UserTable users={users} fetchUsers={fetchUsers} />
     </div>
   )
 }

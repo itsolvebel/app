@@ -21,7 +21,7 @@ type FieldErrors = {
 }
 
 
-export default function RegisterForm() {
+export function RegisterForm() {
   const [form, setForm] = useState<Form>({
     username: '',
     first_name: '',
