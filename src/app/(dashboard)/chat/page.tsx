@@ -1,6 +1,6 @@
 'use client'
 
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ChatRoom } from '@/typings/chat_room'
 import { Result } from '@/typings/result'
@@ -18,9 +18,13 @@ import { TicketUser } from '@/typings/ticket'
 
 export default function ChatPage() {
   const [activeChatRoom, setRoom] = useState<ChatRoom | null>(null)
-  const [openChatRoomDetails, setDetails] = useState(localStorage.getItem('chatDetails') === 'true')
+  const [openChatRoomDetails, setDetails] = useState(false)
   const searchParams = useSearchParams()
   const newTicket = searchParams.get('new')
+
+  useEffect(() => {
+    setDetails(localStorage.getItem('chatDetails') === 'true')
+  }, [])
 
   function setActiveChatRoom(chatRoom: ChatRoom) {
     fetcher.get(`chat_rooms/${chatRoom.id}`)

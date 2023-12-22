@@ -16,9 +16,13 @@ import { User, UserRole } from '@/typings/user'
 
 export default function TicketPage() {
   const [activeTicket, setTicket] = useState<Ticket | null>(null)
-  const [openTicketDetails, setDetails] = useState(localStorage.getItem('chatDetails') === 'true')
+  const [openTicketDetails, setDetails] = useState(false)
   const searchParams = useSearchParams()
   const newTicket = searchParams.get('new')
+
+  useEffect(() => {
+    setDetails(localStorage.getItem('chatDetails') === 'true')
+  }, [])
 
   function setActiveTicket(ticket: Ticket) {
     fetcher.get(`tickets/${ticket.id}`)
