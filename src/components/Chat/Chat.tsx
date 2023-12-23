@@ -14,12 +14,12 @@ import { Ticket } from '@/typings/ticket'
 import { ChatRoom } from '@/typings/chat_room'
 
 type ChatProps = {
-  loadMessages: (offset: number) => Promise<Result<Message[]>>;
-  sendMessage: (content: string) => Promise<Result<Message>>;
-  openDetails: boolean;
-  activeChat: Ticket | ChatRoom | null;
-  setOpenDetails: (openDetails: boolean) => void;
-  chatType: 'Ticket' | 'ChatRoom';
+  loadMessages: (offset: number) => Promise<Result<Message[]>>,
+  sendMessage: (content: string) => Promise<Result<Message>>,
+  openDetails: boolean,
+  activeChat: Ticket | ChatRoom | null,
+  setOpenDetails: (openDetails: boolean) => void,
+  chatType: 'Ticket' | 'ChatRoom',
 }
 
 export function Chat(
@@ -124,7 +124,7 @@ export function Chat(
 
   return (
     <>
-      <div className='flex h-screen w-full flex-col rounded-3xl bg-[#E7F1FF]'>
+      <div className='flex h-screen w-full flex-col bg-[#E7F1FF]'>
         <ChatHeader
           title={getTitle()}
           openDetails={openDetails}

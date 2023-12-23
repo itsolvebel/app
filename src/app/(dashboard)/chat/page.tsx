@@ -155,6 +155,7 @@ export default function ChatPage() {
           addMember={addMember}
           formatUser={formatUser}
           removeMember={removeMember}
+          chatType={'ChatRoom'}
         />
       </div>
     </>

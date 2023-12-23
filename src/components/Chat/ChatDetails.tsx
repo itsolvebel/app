@@ -15,6 +15,8 @@ type ChatDetailsProps = {
   addMember: (user: User, role?: UserRole) => Promise<Result<void>>,
   removeMember: (user: User) => Promise<Result<void>>,
   formatUser: (user: User | TicketUser) => ReactNode,
+
+  chatType: 'Ticket' | 'ChatRoom',
 }
 
 export function ChatDetails(
@@ -23,6 +25,7 @@ export function ChatDetails(
     openDetails,
     addMember,
     formatUser,
+    chatType
   }: ChatDetailsProps) {
   const [canManage, setCanManage] = useState(false)
 
@@ -35,6 +38,10 @@ export function ChatDetails(
     fetchRoles()
   }, [])
 
+  function isTicket(): boolean {
+    return chatType === 'Ticket'
+  }
+
   if (activeChat === null) return <></>
   return (
     <>
@@ -45,27 +52,30 @@ export function ChatDetails(
       >
         <div className='flex items-center justify-between'>
           <span className='text-lg font-medium text-[#000000]'>
-            Chat Details
+            {isTicket() ? 'Ticket Details' : 'Chat Details'}
           </span>
         </div>
-        {canManage && (<div>
-          <AddUserPopover chat={activeChat}
-                          addMember={addMember}
-          />
-        </div>)}
-
+        {canManage && (
+          <AddUserPopover chat={activeChat} addMember={addMember} />
+        )}
+        {canManage && isTicket() && (
+          <div>
+          {/*  todo add set status */}
+          </div>
+        )}
         <div className='flex flex-col'>
           <span className='flex items-center gap-2 text-sm font-medium text-[#ABABAD]'>
             <Users color='#ABABAD' size={20} />
             Members
             <span className='rounded-sm bg-[#EAFAFE] px-3 text-xs text-[#75A9BC]'>
-              {activeChat.users.length}
+              {activeChat.users.length + (isTicket() ? 1 : 0)}
             </span>
           </span>
           <div className='mt-5 flex flex-col gap-4'>
             {activeChat.users && activeChat.users.map((member) => {
               return formatUser(member)
             })}
+            {isTicket() ? formatUser((activeChat as Ticket).user) : ''}
           </div>
         </div>
       </div>

@@ -56,16 +56,18 @@ export function TicketSidebar({ activeTicket, setActiveTicket, newTicketTitle }:
               ? 'Active Tickets'
               : 'You don\'t have any active tickets'}
           </span>
+          <div className='overflow-y-scroll h-[calc(100vh-300px)] w-full flex flex-col gap-4 pb-8'>
           {tickets.filter(ticket => ticket.status === 'Open').map((ticket) => {
-            return (
-              <TicketComponent
-                key={ticket.id}
-                ticket={ticket}
-                activeTicket={activeTicket}
-                setActiveTicket={setActiveTicket}
-              />
-            )
-          })}
+              return (
+                <TicketComponent
+                  key={ticket.id}
+                  ticket={ticket}
+                  activeTicket={activeTicket}
+                  setActiveTicket={setActiveTicket}
+                />
+              )
+            })}
+          </div>
         </div>
       </div>
       <div className='absolute bottom-0 flex w-full flex-col bg-[#5A8ED1] p-5'>

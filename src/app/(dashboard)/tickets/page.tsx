@@ -117,8 +117,7 @@ export default function TicketPage() {
   }
 
   function formatUser(user: TicketUser | User): ReactNode {
-    if (!('user' in user)) return
-    const member = (user as TicketUser).user
+    const member: User = (user as TicketUser).user !== undefined ? (user as TicketUser).user : user as User
     return (
       <>
         <div
@@ -138,7 +137,9 @@ export default function TicketPage() {
           )}
           <div className='flex flex-col'>
             {member.first_name} {member.last_name}
-            <span className={'text-xs text-[#ABABAD]'}>{user.role}</span>
+            <span className={'text-xs text-[#ABABAD]'}>
+              {(user as TicketUser).role !== undefined ? (user as TicketUser).role : 'Client'}
+            </span>
           </div>
         </div>
       </>
@@ -168,6 +169,7 @@ export default function TicketPage() {
           addMember={addMember}
           formatUser={formatUser}
           removeMember={removeMember}
+          chatType={'Ticket'}
         />
       </div>
     </>

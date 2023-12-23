@@ -63,16 +63,18 @@ export function ChatSidebar({ activeChatRoom, setActiveChatRoom, newChatRoomTitl
               ? 'Active Chat Groups'
               : 'You don\'t have any active Chat groups'}
           </span>
-          {chatRooms.map((chatRoom) => {
-            return (
-              <ChatRoom
-                key={chatRoom.id}
-                chatRoom={chatRoom}
-                activeChatRoom={activeChatRoom}
-                setActiveChatRoom={setActiveChatRoom}
-              />
-            )
-          })}
+          <div className='overflow-y-scroll h-[calc(100vh-300px)] w-full flex flex-col gap-4 pb-8'>
+            {chatRooms.map((chatRoom) => {
+              return (
+                <ChatRoom
+                  key={chatRoom.id}
+                  chatRoom={chatRoom}
+                  activeChatRoom={activeChatRoom}
+                  setActiveChatRoom={setActiveChatRoom}
+                />
+              )
+            })}
+          </div>
         </div>
       </div>
       {isAdmin && (<div className='absolute bottom-0 flex w-full flex-col bg-[#5A8ED1] p-5'>
