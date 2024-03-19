@@ -5,6 +5,6 @@ export const config = {
   VERSION: production ? '1.0.0' : '1.0.0-beta',
   WEBSOCKET_URL: 'wss://gateway.itsolve.be',
   BACKEND_URL: 'https://services-api.itsolve.be/v1',
-  AUTH_URL: 'https://auth-api.itsolve.be/services/v1',
+  AUTH_URL: 'https://auth.itsolve.be',
   MESSAGES_PER_PAGE: 50,
 }
