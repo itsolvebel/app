@@ -86,6 +86,7 @@ const filterResourceString = (resource: string) => {
 }
 
 const fetcher = Fetcher(config.BACKEND_URL)
+const authFetcher = Fetcher(config.AUTH_URL)
 
 
-export { fetcher }
+export { fetcher, authFetcher }

@@ -1,5 +1,5 @@
 import { config } from '@/config'
-import { fetcher } from '@/lib/fetcher'
+import { authFetcher, fetcher } from '@/lib/fetcher'
 import { User, UserRole } from '@/typings/user'
 import { jwtDecode } from 'jwt-decode'
 import dayjs from 'dayjs'
@@ -71,7 +71,7 @@ export async function login(body: LoginBody) {
       'Content-Type': 'application/json',
     },
   }
-  return await fetcher.post('auth/login', body, options)
+  return await authFetcher.post('auth/login', body, options)
 }
 
 export async function register(body: RegisterBody) {
@@ -82,7 +82,7 @@ export async function register(body: RegisterBody) {
       'Content-Type': 'application/json',
     },
   }
-  return await fetcher.post('auth/signup', body, options)
+  return await authFetcher.post('auth/signup', body, options)
 }
 
 
@@ -90,7 +90,7 @@ let cachedUser: User | null = null
 
 export async function getMe(invalidate = false): Promise<User> {
   if (invalidate || !cachedUser) {
-    const fetchedUser = await fetcher.get('/auth/me')
+    const fetchedUser = await authFetcher.get('/auth/me')
     cachedUser = fetchedUser.data as User
   }
   return cachedUser
