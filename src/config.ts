@@ -6,5 +6,6 @@ export const config = {
   WEBSOCKET_URL: 'wss://gateway.itsolve.be',
   BACKEND_URL: 'https://services-api.itsolve.be/v1',
   AUTH_URL: 'https://auth.itsolve.be',
+  AUTH_API_URL: 'https://auth-api.itsolve.be/v1',
   MESSAGES_PER_PAGE: 50,
 }

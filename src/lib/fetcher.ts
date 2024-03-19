@@ -1,23 +1,16 @@
 import { config } from '@/config'
 import { FetchingError } from '@/lib/errors'
 import { refreshAccessToken } from '@/lib/auth'
-import Cookies from 'js-cookie'
 
 type Fetcher = {
   get<T = any>(resource: string, options?: RequestInit): Promise<T>;
   post<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
   put<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
   delete<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
-  setToken(token: string): void;
 }
 
 let token: string
 const Fetcher = (baseUrl: string): Fetcher => {
-  const setToken = (t: string) => {
-    token = t
-    localStorage.setItem('token', t)
-    Cookies.set('token', token, { expires: 9999999, sameSite: 'None', secure: true })
-  }
   const makeRequest = async <T = any>(method: string, resource: string, options?: RequestInit, body?: any): Promise<T> => {
     resource = filterResourceString(resource)
     const requestOptions: RequestInit = {
@@ -25,7 +18,6 @@ const Fetcher = (baseUrl: string): Fetcher => {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token || localStorage.getItem('token')}`,
         ...options?.headers,
       },
       body: body ? JSON.stringify(body) : undefined,
@@ -75,7 +67,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
     return makeRequest('DELETE', resource, options)
   }
 
-  return { get, post, put, delete: deleteRequest, setToken }
+  return { get, post, put, delete: deleteRequest }
 }
 
 const filterResourceString = (resource: string) => {
@@ -86,7 +78,7 @@ const filterResourceString = (resource: string) => {
 }
 
 const fetcher = Fetcher(config.BACKEND_URL)
-const authFetcher = Fetcher(config.AUTH_URL)
+const authFetcher = Fetcher(config.AUTH_API_URL)
 
 
 export { fetcher, authFetcher }
