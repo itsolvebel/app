@@ -1,10 +1,8 @@
-import { config } from '@/config'
-import { authFetcher, fetcher } from '@/lib/fetcher'
+import { authFetcher } from '@/lib/fetcher'
 import { User, UserRole } from '@/typings/user'
 import { jwtDecode } from 'jwt-decode'
 import dayjs from 'dayjs'
 import { FetchingError } from '@/lib/errors'
-import Cookies from 'js-cookie'
 
 export async function verifyJwtToken(token: string) {
   const user = jwtDecode(token)
@@ -28,7 +26,6 @@ export async function refreshAccessToken() {
 
 export async function logout() {
   try {
-    localStorage.removeItem('token')
     await authFetcher.post('/logout', {})
   } catch (e) {
     throw new Error('There was an issue with logging out')
@@ -39,8 +36,7 @@ let cachedUser: User | null = null
 
 export async function getMe(invalidate = false): Promise<User> {
   if (invalidate || !cachedUser) {
-    const fetchedUser = await authFetcher.get('/me')
-    cachedUser = fetchedUser.data as User
+    cachedUser = await authFetcher.get<User>('/me')
   }
   return cachedUser
 }

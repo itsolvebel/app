@@ -21,14 +21,14 @@ export async function middleware(req: NextRequest) {
   });
 
   if (!verifiedAccessToken && !verifiedRefreshToken) {
-    return NextResponse.redirect(new URL(configuration.AUTH_URL));
+    return NextResponse.redirect(new URL(`${configuration.AUTH_URL}?redirect=${req.url.replace('http://', '').replace('https://', '')}`));
   }
   // Access token revoked but refresh token ok, so get a new access token before continuing.
   if (!verifiedAccessToken && verifiedRefreshToken) {
     try {
       await refreshAccessToken();
     } catch {
-      return NextResponse.redirect(new URL(configuration.AUTH_URL));
+      return NextResponse.redirect(new URL(`${configuration.AUTH_URL}?redirect=${req.url.replace('http://', '').replace('https://', '')}`));
     }
     return;
   }

@@ -3,15 +3,16 @@ import { FetchingError } from '@/lib/errors'
 import { refreshAccessToken } from '@/lib/auth'
 
 type Fetcher = {
-  get<T = any>(resource: string, options?: RequestInit): Promise<T>;
-  post<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
-  put<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
-  delete<T = any>(resource: string, body: any, options?: RequestInit): Promise<T>;
+  get<T>(resource: string, options?: RequestInit): Promise<T>;
+  post<T>(resource: string, body: T, options?: RequestInit): Promise<T>;
+  put<T>(resource: string, body: T, options?: RequestInit): Promise<T>;
+  delete<T>(resource: string, body: T, options?: RequestInit): Promise<T>;
 }
 
-let token: string
+type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
 const Fetcher = (baseUrl: string): Fetcher => {
-  const makeRequest = async <T = any>(method: string, resource: string, options?: RequestInit, body?: any): Promise<T> => {
+  const makeRequest = async <T>(method: Method, resource: string, options?: RequestInit, body?: T): Promise<T> => {
     resource = filterResourceString(resource)
     const requestOptions: RequestInit = {
       credentials: 'include',
@@ -28,6 +29,7 @@ const Fetcher = (baseUrl: string): Fetcher => {
 
     if (response.status === 401) {
       const res = await refreshAccessToken()
+      // @ts-ignore
       if (res.ok && response.status !== 401) {
         return makeRequest(method, resource, options, body)
       } else {
@@ -56,15 +58,15 @@ const Fetcher = (baseUrl: string): Fetcher => {
     return makeRequest('GET', resource, options)
   }
 
-  const post = async (resource: string, body: any, options?: RequestInit): Promise<any> => {
+  const post = async <T>(resource: string, body: T, options?: RequestInit): Promise<T> => {
     return makeRequest('POST', resource, options, body)
   }
-  const put = async (resource: string, body: any, options?: RequestInit): Promise<any> => {
+  const put = async <T>(resource: string, body: T, options?: RequestInit): Promise<T> => {
     return makeRequest('PUT', resource, options, body)
   }
 
-  const deleteRequest = async (resource: string, options?: RequestInit): Promise<any> => {
-    return makeRequest('DELETE', resource, options)
+  const deleteRequest = async <T>(resource: string, body: T, options?: RequestInit): Promise<T> => {
+    return makeRequest('DELETE', resource, options, body)
   }
 
   return { get, post, put, delete: deleteRequest }
